@@ -607,27 +607,6 @@ body {
 }
 .modal-close:hover { border-color: var(--navy); color: var(--navy); }
 
-/* ── ADVISOR SECTION ── */
-#advisory-section { padding: 110px 0; background: var(--bg); }
-.advisory-inner { max-width: 1320px; margin: 0 auto; padding: 0 40px; }
-.advisory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 24px; margin-top: 48px; }
-.advisory-card {
-  background: #fff; border: 1px solid rgba(45,66,86,.08); border-radius: var(--r);
-  overflow: hidden; text-align: center;
-  transition: transform .25s, box-shadow .25s;
-}
-.advisory-card:hover { transform: translateY(-6px); box-shadow: 0 24px 50px -30px rgba(29,44,58,.3); }
-.advisory-photo {
-  width: 100%; aspect-ratio: 1/1; background: linear-gradient(135deg,#dceac0,#c8ddb5);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 3rem; color: var(--muted); overflow: hidden;
-}
-.advisory-photo img { width: 100%; height: 100%; object-fit: cover; }
-.advisory-info { padding: 20px; }
-.advisory-name { font-weight: 700; font-size: 1rem; margin-bottom: 4px; color: var(--navy); }
-.advisory-role { font-size: .8rem; color: #3f5410; font-weight: 600; margin-bottom: 4px; }
-.advisory-company { font-size: .75rem; color: var(--muted); }
-
 /* ── PARTNER SECTION ── */
 #partner-section { padding: 110px 0; background: var(--bg); }
 .partner-inner { max-width: 1320px; margin: 0 auto; padding: 0 40px; }
@@ -909,10 +888,6 @@ footer { background: var(--navy); padding: 56px 0 32px; }
               <strong>Erfahrungsberichte</strong>
               <span>Stimmen aus echten Challenges</span>
             </button>
-            <button class="dropdown-item" onclick="scrollToSection('advisory-section')">
-              <strong>Advisory Board</strong>
-              <span>Die Köpfe hinter meedup</span>
-            </button>
           </div>
         </div>
       </div>
@@ -1079,19 +1054,6 @@ footer { background: var(--navy); padding: 56px 0 32px; }
     </div>
   </div>
 </section>
-
-<!-- ── ADVISORY BOARD ── -->
-<section id="advisory-section">
-  <div class="advisory-inner">
-    <div class="reveal">
-      <div class="label">Advisory Board</div>
-      <h2 style="font-size:clamp(32px,3.6vw,48px);font-weight:700;letter-spacing:-.025em;margin:0 0 12px">Die Köpfe hinter meedup</h2>
-      <p style="font-size:17px;color:var(--muted);max-width:540px;line-height:1.65">Unser Advisory Board bringt Expertise aus Wirtschaft, Wissenschaft und Innovation.</p>
-    </div>
-    <div class="advisory-grid reveal" id="advisoryGrid"></div>
-  </div>
-</section>
-
 
 <!-- ── ÜBER UNS ── -->
 <section id="about-section">
@@ -1398,13 +1360,6 @@ const TESTIMONIALS = [
   { quote: 'Ich fand die Challenge sehr cool, auch für die Zukunft sehr wertvoll und hat auch echt Spaß gemacht.', author: 'V., 21 Jahre', uni: 'Universität Mainz', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80&auto=format&fit=crop' },
   { quote: 'This was a great challenge that pushed me to think more interdisciplinary and realize how many possibilities there are for innovation that can drive social progress and better equitable health outcomes.', author: 'N., 20 Jahre', uni: 'Goethe-Universität Frankfurt', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80&auto=format&fit=crop' },
   { quote: 'Die Challenge war inspirierend und lehrreich und schafft echten Mehrwert. Ich kann jedem nur empfehlen, an zukünftigen Events teilzunehmen.', author: 'J., 23 Jahre', uni: 'TU Darmstadt', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80&auto=format&fit=crop' }
-];
-
-const ADVISORY = [
-  { name: 'Vorname Nachname', role: 'Strategie & Business', company: 'Unternehmen', photo: null },
-  { name: 'Vorname Nachname', role: 'Innovation & Tech', company: 'Unternehmen', photo: null },
-  { name: 'Vorname Nachname', role: 'Marketing & Brand', company: 'Unternehmen', photo: null },
-  { name: 'Vorname Nachname', role: 'Wissenschaft & Forschung', company: 'Unternehmen', photo: null }
 ];
 
 const PARTNERS = [
@@ -1737,22 +1692,6 @@ function updateReelNav() {
   document.getElementById('reelNext').disabled = reelIdx === TESTIMONIALS.length - 1;
 }
 
-// ── ADVISORY ──
-function buildAdvisory() {
-  document.getElementById('advisoryGrid').innerHTML = ADVISORY.map(m => `
-    <div class="advisory-card">
-      <div class="advisory-photo">
-        ${m.photo ? `<img src="${m.photo}" alt="${m.name}">` : '👤'}
-      </div>
-      <div class="advisory-info">
-        <div class="advisory-name">${m.name}</div>
-        <div class="advisory-role">${m.role}</div>
-        <div class="advisory-company">${m.company}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
 // ── PARTNERS ──
 function buildPartners() {
   const ticker = document.getElementById('partnerTicker');
@@ -1947,7 +1886,6 @@ buildBenefits();
 buildFilters();
 renderChallenges();
 buildReel();
-buildAdvisory();
 buildPartnerSlider();
 buildTextReveal();
 observeReveal();
