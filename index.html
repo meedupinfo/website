@@ -658,6 +658,28 @@ body {
   font-size: 12.5px; color: var(--muted); line-height: 1.5;
   margin: 14px 0 0; padding-top: 14px; border-top: 1px solid rgba(45,66,86,.1);
 }
+
+/* Locked / blurred form with mail overlay */
+.form-locked { position: relative; margin-top: 4px; }
+.form-blurred {
+  filter: blur(3px); opacity: .5; pointer-events: none; user-select: none;
+}
+.form-overlay {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  padding: 20px; border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,.15), rgba(255,255,255,.45));
+}
+.form-overlay-box { text-align: center; }
+.form-overlay-badge {
+  display: inline-block; font-size: 11.5px; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--muted);
+  background: rgba(255,255,255,.85); border: 1px solid rgba(45,66,86,.12);
+  padding: 6px 12px; border-radius: 999px; margin-bottom: 14px; backdrop-filter: blur(4px);
+}
+.form-overlay-btn {
+  display: block; text-decoration: none;
+  box-shadow: 0 18px 40px -14px rgba(29,44,58,.55);
+}
 .contact-info h2 { font-size: clamp(32px,3.6vw,48px); font-weight: 700; letter-spacing: -.025em; margin: 0 0 16px; }
 .contact-info p { font-size: 17px; color: var(--muted); line-height: 1.7; margin: 0 0 36px; }
 .contact-steps { display: flex; flex-direction: column; gap: 20px; }
@@ -1116,55 +1138,62 @@ footer { background: var(--navy); padding: 56px 0 32px; }
       </div>
     </div>
     <div class="contact-form-wrap reveal">
-      <h3>Termin anfragen</h3>
-      <p>Sag uns zuerst, ob du als Unternehmen oder Partner kommst – dann finden wir gemeinsam den passenden Termin.</p>
-      <form onsubmit="submitContactForm(event)">
-        <div class="form-field">
-          <label>Ich melde mich als …</label>
-          <div class="type-toggle">
-            <button type="button" class="type-pill active" data-type="unternehmen" onclick="setContactType('unternehmen')">Unternehmen</button>
-            <button type="button" class="type-pill" data-type="partner" onclick="setContactType('partner')">Partner / Initiative</button>
-          </div>
-          <input type="hidden" id="contactType" name="contactType" value="unternehmen">
+      <h3>Kontakt aufnehmen</h3>
+      <p>Sag uns, ob du als Unternehmen oder Partner kommst – die Infos links passen sich an. Für die Anfrage schreib uns aktuell einfach direkt per Mail.</p>
+
+      <div class="form-field">
+        <label>Ich melde mich als …</label>
+        <div class="type-toggle">
+          <button type="button" class="type-pill active" data-type="unternehmen" onclick="setContactType('unternehmen')">Unternehmen</button>
+          <button type="button" class="type-pill" data-type="partner" onclick="setContactType('partner')">Partner / Initiative</button>
         </div>
-        <div class="form-field">
-          <label>Dein Name</label>
-          <input type="text" placeholder="Max Mustermann" required>
-        </div>
-        <div class="form-field">
-          <label id="orgLabel">Unternehmen</label>
-          <input type="text" id="orgInput" placeholder="Dein Unternehmen" required>
-        </div>
-        <div class="form-field">
-          <label>E-Mail-Adresse</label>
-          <input type="email" placeholder="max@unternehmen.de" required>
-        </div>
-        <div class="form-grid-2">
+        <input type="hidden" id="contactType" name="contactType" value="unternehmen">
+      </div>
+
+      <div class="form-locked">
+        <form class="form-blurred" inert>
           <div class="form-field">
-            <label>Wunschdatum</label>
-            <input type="date" required>
+            <label>Dein Name</label>
+            <input type="text" placeholder="Max Mustermann" tabindex="-1">
           </div>
           <div class="form-field">
-            <label>Uhrzeit</label>
-            <select required>
-              <option value="">Bitte wählen</option>
-              <option>09:00 – 10:00 Uhr</option>
-              <option>10:00 – 11:00 Uhr</option>
-              <option>11:00 – 12:00 Uhr</option>
-              <option>13:00 – 14:00 Uhr</option>
-              <option>14:00 – 15:00 Uhr</option>
-              <option>15:00 – 16:00 Uhr</option>
-              <option>16:00 – 17:00 Uhr</option>
-            </select>
+            <label id="orgLabel">Unternehmen</label>
+            <input type="text" id="orgInput" placeholder="Dein Unternehmen" tabindex="-1">
+          </div>
+          <div class="form-field">
+            <label>E-Mail-Adresse</label>
+            <input type="email" placeholder="max@unternehmen.de" tabindex="-1">
+          </div>
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label>Wunschdatum</label>
+              <input type="date" tabindex="-1">
+            </div>
+            <div class="form-field">
+              <label>Uhrzeit</label>
+              <select tabindex="-1">
+                <option value="">Bitte wählen</option>
+                <option>09:00 – 10:00 Uhr</option>
+                <option>10:00 – 11:00 Uhr</option>
+                <option>11:00 – 12:00 Uhr</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field">
+            <label id="msgLabel">Challenge-Idee (optional)</label>
+            <textarea id="msgInput" placeholder="Kurze Beschreibung …" tabindex="-1"></textarea>
+          </div>
+          <button type="button" class="btn btn-navy" style="width:100%;margin-top:8px" tabindex="-1">Termin anfragen →</button>
+        </form>
+        <div class="form-overlay">
+          <div class="form-overlay-box">
+            <span class="form-overlay-badge">Online-Formular folgt bald</span>
+            <a href="mailto:info@meedup.de" id="mailBtn" class="btn btn-navy form-overlay-btn">✉️ Per Mail kontaktieren</a>
           </div>
         </div>
-        <div class="form-field">
-          <label id="msgLabel">Challenge-Idee (optional)</label>
-          <textarea id="msgInput" placeholder="Kurze Beschreibung …"></textarea>
-        </div>
-        <button type="submit" class="btn btn-navy" style="width:100%;margin-top:8px">Termin anfragen →</button>
-        <p class="form-note">📅 Nach dem Absenden verbinden wir dich mit unserem Kalender (Google Calendar), um den Termin verbindlich zu buchen.</p>
-      </form>
+      </div>
+
+      <p class="form-note">Schreib uns direkt an <a href="mailto:info@meedup.de" style="color:var(--navy);font-weight:600">info@meedup.de</a> – wir melden uns schnell zurück.</p>
     </div>
   </div>
 </section>
@@ -1725,7 +1754,8 @@ const CONTACT_CONTENT = {
       ['Challenge live schalten', 'Wir begleiten dich durch den gesamten Prozess.']
     ],
     orgLabel: 'Unternehmen', orgPlaceholder: 'Dein Unternehmen',
-    msgLabel: 'Challenge-Idee (optional)'
+    msgLabel: 'Challenge-Idee (optional)',
+    mailSubject: 'Anfrage als Unternehmen – meedup'
   },
   partner: {
     label: 'Für Partner',
@@ -1737,7 +1767,8 @@ const CONTACT_CONTENT = {
       ['Kooperation starten', 'Wir planen gemeinsam die nächsten Schritte.']
     ],
     orgLabel: 'Initiative / Organisation', orgPlaceholder: 'Deine Initiative',
-    msgLabel: 'Worum geht\u2019s? (optional)'
+    msgLabel: 'Worum geht\u2019s? (optional)',
+    mailSubject: 'Anfrage als Partner / Initiative – meedup'
   }
 };
 
@@ -1759,23 +1790,13 @@ function setContactType(type) {
   document.getElementById('orgLabel').textContent = c.orgLabel;
   document.getElementById('orgInput').placeholder = c.orgPlaceholder;
   document.getElementById('msgLabel').textContent = c.msgLabel;
+  const mailBtn = document.getElementById('mailBtn');
+  if (mailBtn) mailBtn.href = 'mailto:info@meedup.de?subject=' + encodeURIComponent(c.mailSubject);
 }
 
 function openContact(type) {
   setContactType(type);
   scrollToSection('contact-section');
-}
-
-function submitContactForm(e) {
-  e.preventDefault();
-  const btn = e.target.querySelector('button[type=submit]');
-  btn.textContent = '✓ Anfrage gesendet!';
-  btn.style.background = '#3f5410';
-  setTimeout(() => {
-    btn.textContent = 'Termin anfragen →'; btn.style.background = '';
-    e.target.reset();
-    setContactType('unternehmen');
-  }, 3500);
 }
 
 // ── REVEAL ANIMATION ──
@@ -1890,6 +1911,7 @@ buildPartnerSlider();
 buildTextReveal();
 observeReveal();
 observeCounters();
+setContactType('unternehmen');
 applyZoom();
 </script>
 </body>
