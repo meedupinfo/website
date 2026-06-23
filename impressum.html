@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impressum – meedup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+:root { --bg:#f0e8dc; --navy:#2d4256; --dark:#1d2c3a; --muted:#6b7c89; }
+body { font-family:'Outfit',system-ui,sans-serif; background:var(--bg); color:var(--navy); line-height:1.7; -webkit-font-smoothing:antialiased; }
+
+/* top bar */
+.legal-nav { position:sticky; top:0; z-index:50; background:rgba(240,232,220,.85);
+  backdrop-filter:blur(20px) saturate(1.2); -webkit-backdrop-filter:blur(20px) saturate(1.2);
+  border-bottom:1px solid rgba(45,66,86,.1); }
+.legal-nav-inner { max-width:880px; margin:0 auto; padding:16px 24px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.legal-logo { display:flex; align-items:center; text-decoration:none; }
+.legal-logo img { height:28px; filter:brightness(0) saturate(100%) invert(20%) sepia(30%) saturate(500%) hue-rotate(175deg); }
+.legal-logo span { font-size:22px; font-weight:800; letter-spacing:-.03em; color:var(--navy); }
+.legal-back { font-size:14px; font-weight:600; color:var(--navy); text-decoration:none;
+  padding:9px 18px; border:1px solid rgba(45,66,86,.2); border-radius:999px; transition:all .2s; white-space:nowrap; }
+.legal-back:hover { background:#fff; }
+
+/* content */
+.legal-wrap { max-width:780px; margin:0 auto; padding:64px 24px 90px; }
+.legal-wrap h1 { font-size:clamp(34px,5vw,52px); font-weight:800; letter-spacing:-.03em; margin-bottom:8px; }
+.legal-meta { color:var(--muted); font-size:15px; margin-bottom:8px; }
+.legal-wrap h2 { font-size:23px; font-weight:700; letter-spacing:-.02em;
+  margin:38px 0 14px; padding-top:26px; border-top:1px solid rgba(45,66,86,.12); }
+.legal-wrap p { margin-bottom:14px; color:#3f5160; }
+.legal-wrap address { font-style:normal; margin-bottom:14px; color:#3f5160; }
+.legal-wrap a { color:var(--navy); text-decoration:underline; text-underline-offset:2px; }
+
+/* footer */
+.legal-footer { background:var(--navy); padding:40px 24px; }
+.legal-footer-inner { max-width:880px; margin:0 auto; display:flex; align-items:center;
+  justify-content:space-between; gap:20px; flex-wrap:wrap; }
+.legal-footer img { height:26px; }
+.legal-footer-brand span { color:#fff; font-size:20px; font-weight:800; letter-spacing:-.03em; }
+.legal-footer-links { display:flex; gap:18px; flex-wrap:wrap; }
+.legal-footer-links a { color:rgba(255,255,255,.7); font-size:14px; text-decoration:none; transition:color .2s; }
+.legal-footer-links a:hover { color:#fff; }
+.legal-footer-copy { color:rgba(255,255,255,.4); font-size:13px; width:100%; margin-top:6px; }
+</style>
+</head>
+<body>
+
+<nav class="legal-nav">
+  <div class="legal-nav-inner">
+    <a href="index.html" class="legal-logo">
+      <img src="meedup_logo_weiss.png" alt="meedup" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<span>meedup</span>')">
+    </a>
+    <a href="index.html" class="legal-back">← Zurück zur Startseite</a>
+  </div>
+</nav>
+
+<main class="legal-wrap">
+  <h1>Impressum</h1>
+  <p class="legal-meta">meedup</p>
+
+  <h2 style="border-top:none;padding-top:0;margin-top:28px">Angaben gemäß § 5 DDG</h2>
+  <address>
+    <strong>meedup</strong><br>
+    Lukas Jannik Achenbach &amp; Schedi Samet GbR<br>
+    Rochusallee 22<br>
+    55411 Bingen am Rhein
+  </address>
+  <p>
+    <strong>Telefon:</strong> +49 15734506798<br>
+    <strong>E-Mail:</strong> <a href="mailto:info@meedup.de">info@meedup.de</a>
+  </p>
+
+  <h2>Umsatzsteuer-Identifikationsnummer</h2>
+  <p>Umsatzsteuer-Identifikationsnummer gemäß § 27a UStG:<br>
+  DE457266658</p>
+
+  <h2>Verbraucherstreitbeilegung</h2>
+  <p>Wir sind nicht verpflichtet und nicht bereit, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+</main>
+
+<footer class="legal-footer">
+  <div class="legal-footer-inner">
+    <a href="index.html" class="legal-footer-brand">
+      <img src="meedup_logo_weiss.png" alt="meedup" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<span>meedup</span>')">
+    </a>
+    <div class="legal-footer-links">
+      <a href="index.html">Startseite</a>
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
+    </div>
+    <span class="legal-footer-copy">© 2026 meedup – Lukas Jannik Achenbach &amp; Schedi Samet GbR</span>
+  </div>
+</footer>
+
+</body>
+</html>
