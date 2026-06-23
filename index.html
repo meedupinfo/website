@@ -36,7 +36,21 @@ body {
   --footer: #1a2836;
   --nav-h: 74px;
   --r: 22px;
+  --contrast: #c4f230;
+  --contrast-dark: #b2e01f;
 }
+
+/* ── CATEGORY TAG COLORS ── */
+.cat-news    { background:#dbe9ff; color:#1d4ed8; }
+.cat-challenge { background:#dcf3ee; color:#0f766e; }
+.cat-marketing { background:#ffe3ef; color:#be185d; }
+.cat-hr      { background:#ede0ff; color:#6d28d9; }
+.cat-it,
+.cat-tech    { background:#e0f2f1; color:#0d9488; }
+.cat-design  { background:#fff0db; color:#c2660a; }
+.cat-nawi    { background:#e6f6e0; color:#3f7610; }
+.cat-finance { background:#e7eefb; color:#1e40af; }
+.cat-default { background:#ede4d8; color:#5f7180; }
 
 /* ── ANIMATIONS ── */
 @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
@@ -192,6 +206,21 @@ body {
 }
 #navbar.on-dark .nav-register:hover { background: rgba(255,255,255,.25); }
 
+/* Contrast CTA – overrides both nav states */
+#navbar .nav-register-contrast,
+#navbar.on-dark .nav-register-contrast,
+#navbar:not(.on-dark) .nav-register-contrast {
+  background: var(--contrast); color: var(--dark);
+  border: none; backdrop-filter: none; font-weight: 700;
+  box-shadow: 0 10px 24px -10px rgba(157,201,30,.6);
+}
+#navbar .nav-register-contrast:hover,
+#navbar.on-dark .nav-register-contrast:hover,
+#navbar:not(.on-dark) .nav-register-contrast:hover {
+  background: var(--contrast-dark); transform: translateY(-2px);
+  box-shadow: 0 16px 30px -12px rgba(157,201,30,.7);
+}
+
 /* ── HERO ── */
 #hero-track { height: 165vh; position: relative; }
 #hero-sticky {
@@ -226,6 +255,13 @@ body {
   color: #fff; font-weight: 600; font-size: 13.5px;
   letter-spacing: .04em; text-transform: uppercase;
 }
+.hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-weight: 700; font-size: 12.5px; letter-spacing: .05em; text-transform: uppercase;
+  padding: 7px 14px; border-radius: 999px;
+}
+.hero-tag .hero-eyebrow-dot { width: 7px; height: 7px; }
 .hero-title {
   color: #fff; font-size: clamp(40px, 5.4vw, 76px);
   line-height: 1.02; font-weight: 700; letter-spacing: -.03em;
@@ -382,6 +418,10 @@ body {
   font-weight: 700; font-size: 15px; padding: 7px 14px;
   border-radius: 999px; backdrop-filter: blur(4px);
 }
+.challenge-prize-tag.is-training {
+  background: var(--navy); color: var(--contrast);
+}
+.modal-tag.is-training { background: var(--navy); color: var(--contrast); font-weight: 700; }
 .challenge-city-tag {
   background: rgba(0,0,0,.22); color: #fff;
   font-weight: 500; font-size: 13px; padding: 7px 12px;
@@ -625,6 +665,20 @@ body {
 .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--navy); }
 .form-field input::placeholder, .form-field textarea::placeholder { color: var(--subtle); }
 .form-field textarea { resize: vertical; min-height: 100px; }
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.type-toggle { display: flex; gap: 8px; }
+.type-pill {
+  flex: 1; font-family: 'Outfit'; font-weight: 600; font-size: 14px;
+  padding: 12px 14px; border-radius: 12px; cursor: pointer;
+  background: #fff; color: var(--muted); border: 1px solid rgba(45,66,86,.15);
+  transition: all .18s;
+}
+.type-pill:hover { border-color: var(--navy); }
+.type-pill.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.form-note {
+  font-size: 12.5px; color: var(--muted); line-height: 1.5;
+  margin: 14px 0 0; padding-top: 14px; border-top: 1px solid rgba(45,66,86,.1);
+}
 .contact-info h2 { font-size: clamp(32px,3.6vw,48px); font-weight: 700; letter-spacing: -.025em; margin: 0 0 16px; }
 .contact-info p { font-size: 17px; color: var(--muted); line-height: 1.7; margin: 0 0 36px; }
 .contact-steps { display: flex; flex-direction: column; gap: 20px; }
@@ -767,6 +821,8 @@ footer { background: var(--navy); padding: 56px 0 32px; }
 .stats-bar-num {
   font-size: clamp(36px,5vw,56px); font-weight: 900;
   color: #fff; line-height: 1; margin-bottom: 8px; letter-spacing: -.03em;
+  min-height: clamp(36px,5vw,56px);
+  display: flex; align-items: center; justify-content: center;
 }
 .stats-bar-desc { font-size: 15px; color: rgba(255,255,255,.55); font-weight: 400; }
 @media(max-width:768px) {
@@ -836,28 +892,19 @@ footer { background: var(--navy); padding: 56px 0 32px; }
     </a>
 
     <div class="nav-links">
+      <button class="nav-link" onclick="openContact('unternehmen')">Unternehmen</button>
+      <button class="nav-link" onclick="openContact('partner')">Partner</button>
       <div class="nav-dropdown">
-        <button class="nav-link">Unternehmen <span class="arrow">▾</span></button>
+        <button class="nav-link">Über uns <span class="arrow">▾</span></button>
         <div class="nav-dropdown-panel">
           <div class="nav-dropdown-panel-inner">
-            <button class="dropdown-item" onclick="scrollToSection('contact-section')">
-              <strong>Termin anfragen</strong>
-              <span>Kalender & Bewerbung um einen Beratungs-Slot</span>
+            <button class="dropdown-item" onclick="scrollToSection('about-section')">
+              <strong>meedup</strong>
+              <span>Wer wir sind und wofür wir stehen</span>
             </button>
             <button class="dropdown-item" onclick="scrollToSection('testimonials-section')">
               <strong>Erfahrungsberichte</strong>
-              <span>Stimmen aus der Wirtschaft</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="nav-dropdown">
-        <button class="nav-link">Partner <span class="arrow">▾</span></button>
-        <div class="nav-dropdown-panel">
-          <div class="nav-dropdown-panel-inner">
-            <button class="dropdown-item" onclick="scrollToSection('contact-section')">
-              <strong>Termin anfragen</strong>
-              <span>Kalendersystem mit direkter Terminanfrage</span>
+              <span>Stimmen aus echten Challenges</span>
             </button>
             <button class="dropdown-item" onclick="scrollToSection('advisory-section')">
               <strong>Advisory Board</strong>
@@ -866,14 +913,11 @@ footer { background: var(--navy); padding: 56px 0 32px; }
           </div>
         </div>
       </div>
-      <button class="nav-link" onclick="scrollToSection('students-section')">Studierende</button>
-      <button class="nav-link" onclick="scrollToSection('challenges-section')">Challenges</button>
-      <button class="nav-link" onclick="scrollToSection('about-section')">Über uns</button>
       <button class="nav-link" onclick="scrollToSection('contact-section')">Kontakt</button>
     </div>
 
     <div class="nav-actions">
-      <a href="#" class="nav-register" onclick="event.preventDefault();scrollToSection('challenges-section')">Challenges entdecken</a>
+      <a href="#" class="nav-register nav-register-contrast" onclick="event.preventDefault();scrollToSection('challenges-section')">Challenges entdecken</a>
     </div>
   </div>
 </nav>
@@ -887,18 +931,10 @@ footer { background: var(--navy); padding: 56px 0 32px; }
     <div id="hero-content">
       <div class="hero-inner">
         <div style="max-width:760px">
-          <div class="hero-eyebrow" id="heroEyebrow">
-            <span class="hero-eyebrow-dot"></span>
-            <span class="hero-eyebrow-text">Big News · Expansion</span>
-          </div>
+          <div class="hero-tags" id="heroTags"></div>
           <h1 class="hero-title" id="heroTitle">meedup wächst – jetzt in ganz Deutschland.</h1>
-          <p class="hero-sub" id="heroSub">Echte Challenges von echten Unternehmen. Zeig, was du kannst, und gewinne Preisgeld, Kontakte und deinen Einstieg.</p>
-          <div class="hero-btns">
-            <button class="btn-glass" onclick="scrollToSection('challenges-section')">
-              <div class="btn-glass-bg"></div><span>Challenges entdecken</span>
-            </button>
-            <button class="btn btn-ghost" onclick="scrollToSection('students-section')">Kostenlos mitmachen</button>
-          </div>
+          <p class="hero-sub" id="heroSub">Echte Challenges von echten Unternehmen. Mach mit, sichere dir Preisgeld, Kontakte und direkte Einstiegsmöglichkeiten!</p>
+          <div class="hero-btns" id="heroBtns"></div>
         </div>
       </div>
     </div>
@@ -956,10 +992,9 @@ footer { background: var(--navy); padding: 56px 0 32px; }
         <div class="benefits-header reveal">
           <div>
             <div class="label">Für Studierende</div>
-            <h2>Lös echte Aufgaben.<br>Werde gesehen.</h2>
-            <p>Kein Bewerbungs-Pingpong. Bei meedup zeigst du dein Können an realen Challenges – und Unternehmen kommen auf dich zu.</p>
+            <h2>Echte Aufgaben.<br>Echte Möglichkeiten.</h2>
+            <p>Zeig Unternehmen von Anfang an, was du drauf hast. Gewinne Preise und die Aufmerksamkeit echter Recruiter.</p>
           </div>
-          <button class="btn btn-primary" onclick="scrollToSection('challenges-section')">Jetzt mitmachen</button>
         </div>
         <div class="benefits-grid reveal" id="benefitsGrid"></div>
       </div>
@@ -1061,7 +1096,7 @@ footer { background: var(--navy); padding: 56px 0 32px; }
     <div class="reveal">
       <div class="label">Über uns</div>
       <h2 class="about-text">Wir verbinden Wissen mit Praxis</h2>
-      <p style="font-size:17px;color:var(--muted);line-height:1.75;margin:16px 0 20px">meedup entstand aus einer einfachen Idee: Studierende haben enormes kreatives Potenzial – und Unternehmen stehen vor realen Problemen. Wir schaffen die Brücke zwischen beiden.</p>
+      <p style="font-size:17px;color:var(--muted);line-height:1.75;margin:16px 0 20px">In der aktuellen Arbeitswelt herrscht ein riesiges Missverständnis: Studierende sind innovativer und kreativer denn je und Unternehmen suchen nach genau dieser Kreativität in Führungspositionen. Das Missverständnis? Die Einstellungsverfahren!</p>
       <p style="font-size:17px;color:var(--muted);line-height:1.75;margin:0 0 32px">Durch strukturierte Challenges ermöglichen wir Studierenden echte Praxiserfahrung, während Unternehmen frische Perspektiven und innovative Lösungsansätze gewinnen.</p>
       <button class="btn btn-navy" onclick="scrollToSection('contact-section')">Kontakt aufnehmen</button>
     </div>
@@ -1069,7 +1104,7 @@ footer { background: var(--navy); padding: 56px 0 32px; }
       <div class="stat-card"><div class="stat-number" data-target="10000" data-suffix="+">0</div><div class="stat-label">Engagierte Studierende</div></div>
       <div class="stat-card"><div class="stat-number" data-target="20" data-suffix="+">0</div><div class="stat-label">Initiativen in ganz Deutschland</div></div>
       <div class="stat-card"><div class="stat-number" data-target="100" data-suffix="%">0</div><div class="stat-label">Kostenlos für Studierende</div></div>
-      <div class="stat-card"><div class="stat-number" data-target="48" data-suffix="h">0</div><div class="stat-label">Bis zur ersten Rückmeldung</div></div>
+      <div class="stat-card"><div class="stat-number" data-target="4" data-suffix="+">0</div><div class="stat-label">Durchgeführte Challenges</div></div>
     </div>
   </div>
 </section>
@@ -1083,33 +1118,21 @@ footer { background: var(--navy); padding: 56px 0 32px; }
   </div>
 </section>
 
-<!-- ── CTA BANNER ── -->
-<div style="background:var(--bg);padding:0 0 100px">
-  <div class="cta-banner reveal">
-    <div class="cta-banner-orb"></div>
-    <div class="cta-banner-content">
-      <h2>Bereit, dich zu zeigen?</h2>
-      <p>Erstelle dein Profil in 2 Minuten und bewirb dich auf deine erste Challenge – kostenlos für Studierende.</p>
-      <button class="btn btn-primary btn-lg" onclick="scrollToSection('challenges-section')">Kostenlos mitmachen →</button>
-    </div>
-  </div>
-</div>
-
 <!-- ── KONTAKT / TERMIN ── -->
 <section id="contact-section">
   <div class="contact-inner">
     <div class="reveal">
-      <div class="label">Für Unternehmen & Partner</div>
-      <h2 class="contact-info" style="font-size:clamp(32px,3.6vw,48px);font-weight:700;letter-spacing:-.025em;margin:16px 0 16px">Partner werden</h2>
-      <p style="font-size:17px;color:var(--muted);line-height:1.7;margin:0 0 36px">Nutze das Potenzial von Studierenden aus ganz Deutschland und gewinne frische Perspektiven für deine Herausforderungen.</p>
-      <div class="contact-steps">
+      <div class="label" id="contactLabel">Für Unternehmen</div>
+      <h2 class="contact-info" id="contactHeading" style="font-size:clamp(32px,3.6vw,48px);font-weight:700;letter-spacing:-.025em;margin:16px 0 16px">Stell deine Challenge</h2>
+      <p id="contactIntro" style="font-size:17px;color:var(--muted);line-height:1.7;margin:0 0 36px">Nutze das kreative Potenzial von Studierenden aus ganz Deutschland und gewinne frische Perspektiven für deine echten Herausforderungen.</p>
+      <div class="contact-steps" id="contactSteps">
         <div class="contact-step">
           <div class="step-num">1</div>
           <div class="step-text"><strong>Anfrage einreichen</strong> – Beschreibe kurz dein Unternehmen und deine Challenge-Idee.</div>
         </div>
         <div class="contact-step">
           <div class="step-num">2</div>
-          <div class="step-text"><strong>Erstgespräch</strong> – Wir melden uns innerhalb von 48h und stimmen einen Termin ab.</div>
+          <div class="step-text"><strong>Erstgespräch</strong> – Wir melden uns und stimmen einen Termin ab.</div>
         </div>
         <div class="contact-step">
           <div class="step-num">3</div>
@@ -1128,35 +1151,54 @@ footer { background: var(--navy); padding: 56px 0 32px; }
       </div>
     </div>
     <div class="contact-form-wrap reveal">
-      <h3>Terminanfrage stellen</h3>
-      <p>In einem ersten Gespräch entwickeln wir gemeinsam die perfekte Challenge für dein Unternehmen.</p>
+      <h3>Termin anfragen</h3>
+      <p>Sag uns zuerst, ob du als Unternehmen oder Partner kommst – dann finden wir gemeinsam den passenden Termin.</p>
       <form onsubmit="submitContactForm(event)">
+        <div class="form-field">
+          <label>Ich melde mich als …</label>
+          <div class="type-toggle">
+            <button type="button" class="type-pill active" data-type="unternehmen" onclick="setContactType('unternehmen')">Unternehmen</button>
+            <button type="button" class="type-pill" data-type="partner" onclick="setContactType('partner')">Partner / Initiative</button>
+          </div>
+          <input type="hidden" id="contactType" name="contactType" value="unternehmen">
+        </div>
         <div class="form-field">
           <label>Dein Name</label>
           <input type="text" placeholder="Max Mustermann" required>
         </div>
         <div class="form-field">
-          <label>Unternehmen</label>
-          <input type="text" placeholder="Dein Unternehmen" required>
+          <label id="orgLabel">Unternehmen</label>
+          <input type="text" id="orgInput" placeholder="Dein Unternehmen" required>
         </div>
         <div class="form-field">
           <label>E-Mail-Adresse</label>
           <input type="email" placeholder="max@unternehmen.de" required>
         </div>
-        <div class="form-field">
-          <label>Bevorzugter Termin</label>
-          <select>
-            <option value="">Bitte wählen</option>
-            <option>Werktags morgens (9–12 Uhr)</option>
-            <option>Werktags mittags (12–15 Uhr)</option>
-            <option>Werktags nachmittags (15–18 Uhr)</option>
-          </select>
+        <div class="form-grid-2">
+          <div class="form-field">
+            <label>Wunschdatum</label>
+            <input type="date" required>
+          </div>
+          <div class="form-field">
+            <label>Uhrzeit</label>
+            <select required>
+              <option value="">Bitte wählen</option>
+              <option>09:00 – 10:00 Uhr</option>
+              <option>10:00 – 11:00 Uhr</option>
+              <option>11:00 – 12:00 Uhr</option>
+              <option>13:00 – 14:00 Uhr</option>
+              <option>14:00 – 15:00 Uhr</option>
+              <option>15:00 – 16:00 Uhr</option>
+              <option>16:00 – 17:00 Uhr</option>
+            </select>
+          </div>
         </div>
         <div class="form-field">
-          <label>Challenge-Idee (optional)</label>
-          <textarea placeholder="Kurze Beschreibung..."></textarea>
+          <label id="msgLabel">Challenge-Idee (optional)</label>
+          <textarea id="msgInput" placeholder="Kurze Beschreibung …"></textarea>
         </div>
         <button type="submit" class="btn btn-navy" style="width:100%;margin-top:8px">Termin anfragen →</button>
+        <p class="form-note">📅 Nach dem Absenden verbinden wir dich mit unserem Kalender (Google Calendar), um den Termin verbindlich zu buchen.</p>
       </form>
     </div>
   </div>
@@ -1233,34 +1275,42 @@ footer { background: var(--navy); padding: 56px 0 32px; }
 // ── DATA ──
 const SLIDES = [
   {
-    eyebrow: 'Big News · Expansion',
+    tags: [{ label: 'Big News', type: 'news', dot: true }],
     title: 'meedup wächst – jetzt in ganz Deutschland.',
-    sub: 'Echte Challenges von echten Unternehmen. Zeig, was du kannst, und gewinne Preisgeld, Kontakte und deinen Einstieg.',
-    ctaLabel: 'Challenges entdecken',
+    sub: 'Echte Challenges von echten Unternehmen. Mach mit, sichere dir Preisgeld, Kontakte und direkte Einstiegsmöglichkeiten!',
+    buttons: [
+      { label: 'Challenges entdecken', cls: 'glass', onclick: "scrollToSection('challenges-section')" }
+    ],
     bg: "linear-gradient(115deg,rgba(26,40,54,.86) 0%,rgba(45,66,86,.55) 60%,rgba(45,66,86,.40) 100%), url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1500&q=72') center/cover"
   },
   {
-    eyebrow: 'Aktuelle Challenge',
-    title: 'Bau unsere Community mit auf – Social Media für meedup.',
+    tags: [{ label: 'Challenge', type: 'challenge' }, { label: 'Marketing', type: 'marketing' }],
+    title: 'Deine eigene Social-Media Kampagne',
     sub: 'Entwickle eine Marketing-Kampagne für LinkedIn oder Instagram. Deadline: 13. Juli – Teilnahme kostenlos.',
-    ctaLabel: 'Zur Challenge',
+    buttons: [
+      { label: 'Zur Challenge', cls: 'glass', onclick: "openModal(0)" },
+      { label: 'Kostenlos mitmachen', cls: 'ghost', onclick: "scrollToSection('challenges-section')" }
+    ],
     bg: "linear-gradient(115deg,rgba(21,48,58,.86) 0%,rgba(31,85,102,.55) 60%,rgba(45,125,110,.40) 100%), url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1500&q=72') center/cover",
     challengeId: 0
   },
   {
-    eyebrow: 'HR Challenge',
+    tags: [{ label: 'Challenge', type: 'challenge' }, { label: 'HR', type: 'hr' }],
     title: 'Zwei Jobangebote – gleiches Gehalt. Was entscheidet?',
-    sub: 'Entwickle eine Strategie für moderne Benefits und hybride Arbeitsmodelle. Zeig, was die nächste Generation wirklich will.',
-    ctaLabel: 'Zur Challenge',
+    sub: 'Auf welche Aspekte kommt es bei einem Arbeitgeber an? Gestalte die Philosophie deutscher Unternehmen aktiv mit!',
+    buttons: [
+      { label: 'Zur Challenge', cls: 'glass', onclick: "openModal(1)" },
+      { label: 'Kostenlos mitmachen', cls: 'ghost', onclick: "scrollToSection('challenges-section')" }
+    ],
     bg: "linear-gradient(115deg,rgba(36,31,58,.84) 0%,rgba(58,53,96,.55) 60%,rgba(87,74,134,.42) 100%), url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1500&q=72') center/cover",
     challengeId: 1
   }
 ];
 
 const BENEFITS = [
-  { icon: '🎯', bg: '#f0e8dc', title: 'Echte Probleme lösen', text: 'Keine Fallstudien – du arbeitest an realen Herausforderungen, mit denen Unternehmen täglich konfrontiert sind.' },
-  { icon: '🤝', bg: '#e4d4c8', title: 'Netzwerk aufbauen', text: 'Knüpfe direkte Kontakte zu Unternehmen und Entscheidern – noch während des Studiums.' },
-  { icon: '📄', bg: '#ede0d4', title: 'CV stärken', text: 'Echte Projekterfahrung, die in Vorstellungsgesprächen wirklich zählt – nicht nur ein Praktikumszeugnis.' },
+  { icon: '🎯', bg: '#f0e8dc', title: 'Echte Probleme lösen', text: 'Unternehmen präsentieren dir Challenges, die sie wirklich beschäftigen. Löse sie auf deine eigene Art und Weise und beweis dein Können!' },
+  { icon: '🤝', bg: '#e4d4c8', title: 'Netzwerk aufbauen', text: 'Knüpfe lebensverändernde Kontakte in die obersten Positionen führender deutscher Unternehmen und gib deinem Karriereeinstieg einen Headstart!' },
+  { icon: '📄', bg: '#ede0d4', title: 'CV stärken', text: 'Heb dich von allen Bewerbern ab, indem du echte Cases aus meedup-Challenges vorweisen kannst.' },
   { icon: '⚡', bg: '#f5eee6', title: 'Kostenlos mitmachen', text: 'Alle Challenges sind kostenlos. Einzel- oder Teamteilnahme möglich. Kein Risiko, nur Chancen.' }
 ];
 
@@ -1270,7 +1320,7 @@ const CHALLENGES = [
     title: 'Bau unsere Community mit auf – Social Media für meedup',
     company: 'meedup Challenge',
     logo: 'M',
-    prize: 0, prizeLabel: 'Kostenlos',
+    prize: 0, prizeLabel: 'Training',
     branche: 'Marketing',
     deadline: '2025-07-13', dateLabel: 'bis 13. Juli',
     city: 'Deutschland',
@@ -1306,7 +1356,7 @@ const CHALLENGES = [
     title: 'Du hast zwei Jobangebote – gleiches Gehalt. Was entscheidet?',
     company: 'meedup HR Challenge',
     logo: 'HR',
-    prize: 0, prizeLabel: 'Kostenlos',
+    prize: 0, prizeLabel: 'Training',
     branche: 'HR',
     deadline: '2025-07-20', dateLabel: 'bis 20. Juli',
     city: 'Deutschland',
@@ -1338,9 +1388,9 @@ const CHALLENGES = [
 ];
 
 const TESTIMONIALS = [
-  { quote: 'Ich fand die Challenge sehr cool, auch für die Zukunft sehr wertvoll und hat auch echt Spaß gemacht.', author: 'V., 21 Jahre', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80&auto=format&fit=crop' },
-  { quote: 'This was a great challenge that pushed me to think more interdisciplinary and realize how many possibilities there are for innovation that can drive social progress and better equitable health outcomes.', author: 'N., 20 Jahre', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80&auto=format&fit=crop' },
-  { quote: 'Die Challenge war inspirierend und lehrreich und schafft echten Mehrwert. Ich kann jedem nur empfehlen, an zukünftigen Events teilzunehmen.', author: 'J., 23 Jahre', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80&auto=format&fit=crop' }
+  { quote: 'Ich fand die Challenge sehr cool, auch für die Zukunft sehr wertvoll und hat auch echt Spaß gemacht.', author: 'V., 21 Jahre', uni: 'Universität Mainz', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80&auto=format&fit=crop' },
+  { quote: 'This was a great challenge that pushed me to think more interdisciplinary and realize how many possibilities there are for innovation that can drive social progress and better equitable health outcomes.', author: 'N., 20 Jahre', uni: 'Goethe-Universität Frankfurt', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80&auto=format&fit=crop' },
+  { quote: 'Die Challenge war inspirierend und lehrreich und schafft echten Mehrwert. Ich kann jedem nur empfehlen, an zukünftigen Events teilzunehmen.', author: 'J., 23 Jahre', uni: 'TU Darmstadt', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80&auto=format&fit=crop' }
 ];
 
 const ADVISORY = [
@@ -1376,6 +1426,7 @@ function buildHero() {
     zoom.appendChild(div);
   });
   buildDots();
+  updateHeroText();
   startAutoplay();
 }
 
@@ -1398,16 +1449,44 @@ function goSlide(n) {
   resetAutoplay();
 }
 
+function catClass(label) {
+  const k = (label || '').toLowerCase().replace(/[^a-z]/g, '');
+  const map = {
+    news: 'cat-news', challenge: 'cat-challenge', marketing: 'cat-marketing',
+    socialmedia: 'cat-marketing', kreativ: 'cat-marketing',
+    hr: 'cat-hr', workplace: 'cat-hr', strategie: 'cat-hr',
+    it: 'cat-it', tech: 'cat-tech', design: 'cat-design',
+    nawi: 'cat-nawi', finance: 'cat-finance'
+  };
+  return map[k] || 'cat-default';
+}
+
+function renderHeroTags(s) {
+  document.getElementById('heroTags').innerHTML = s.tags.map(t =>
+    `<span class="hero-tag ${catClass(t.type)}">${t.dot ? '<span class="hero-eyebrow-dot"></span>' : ''}${t.label}</span>`
+  ).join('');
+}
+
+function renderHeroButtons(s) {
+  document.getElementById('heroBtns').innerHTML = s.buttons.map(b => {
+    if (b.cls === 'glass') {
+      return `<button class="btn-glass" onclick="${b.onclick}"><div class="btn-glass-bg"></div><span>${b.label}</span></button>`;
+    }
+    return `<button class="btn btn-ghost" onclick="${b.onclick}">${b.label}</button>`;
+  }).join('');
+}
+
 function updateHeroText() {
   const s = SLIDES[slideIdx];
-  document.querySelector('.hero-eyebrow-text').textContent = s.eyebrow;
+  renderHeroTags(s);
   document.getElementById('heroTitle').textContent = s.title;
   document.getElementById('heroSub').textContent = s.sub;
+  renderHeroButtons(s);
 }
 
 function nextSlide() { goSlide((slideIdx + 1) % SLIDES.length); }
 function prevSlide() { goSlide((slideIdx - 1 + SLIDES.length) % SLIDES.length); }
-function startAutoplay() { slideTimer = setInterval(nextSlide, 5500); }
+function startAutoplay() { slideTimer = setInterval(nextSlide, 8000); }
 function resetAutoplay() { clearInterval(slideTimer); startAutoplay(); }
 
 // Scroll zoom
@@ -1462,7 +1541,7 @@ function buildBenefits() {
 // ── CHALLENGES ──
 let fBranche = 'Alle', fPrice = 'Alle', fSort = 'Frist';
 const BRANCHEN = ['Alle','Marketing','HR','Tech','Design','NaWi','Finance'];
-const PRICES = ['Alle','Kostenlos','Mit Preisgeld'];
+const PRICES = ['Alle','Training','Mit Preisgeld'];
 
 function toggleFilters() {
   const box = document.getElementById('filterBox');
@@ -1489,13 +1568,13 @@ function setSort(v) { fSort = v; buildFilters(); renderChallenges(); }
 function renderChallenges() {
   let cs = CHALLENGES.slice();
   if (fBranche !== 'Alle') cs = cs.filter(c => c.branche === fBranche);
-  if (fPrice === 'Kostenlos') cs = cs.filter(c => c.prize === 0);
+  if (fPrice === 'Training') cs = cs.filter(c => c.prize === 0);
   if (fPrice === 'Mit Preisgeld') cs = cs.filter(c => c.prize > 0);
   document.getElementById('resultCount').textContent = cs.length;
   document.getElementById('challengesGrid').innerHTML = cs.map(c => `
     <div class="challenge-card" onclick="openModal(${c.id})">
       <div class="challenge-card-img" style="background:${c.bg}">
-        <span class="challenge-prize-tag">${c.prizeLabel}</span>
+        <span class="challenge-prize-tag${c.prize === 0 ? ' is-training' : ''}">${c.prizeLabel}</span>
         <span class="challenge-city-tag">📍 ${c.city}</span>
       </div>
       <div class="challenge-card-body">
@@ -1506,7 +1585,7 @@ function renderChallenges() {
         </div>
         <h3>${c.title}</h3>
         <p class="challenge-blurb">${c.blurb}</p>
-        <div class="challenge-tags">${c.tags.map(t => `<span class="challenge-tag">${t}</span>`).join('')}</div>
+        <div class="challenge-tags">${c.tags.map(t => `<span class="challenge-tag ${catClass(t)}">${t}</span>`).join('')}</div>
       </div>
     </div>
   `).join('') || '<div style="grid-column:1/-1;text-align:center;padding:60px;color:rgba(255,255,255,.5)">Keine Challenges gefunden.</div>';
@@ -1523,7 +1602,7 @@ function openModal(id) {
   document.getElementById('modalLogo').textContent = c.logo;
   document.getElementById('modalCompanyName').textContent = c.company;
   document.getElementById('modalTitle').textContent = c.title;
-  document.getElementById('modalTags').innerHTML = c.tags.map(t => `<span class="modal-tag">${t}</span>`).join('') + `<span class="modal-tag">${c.prizeLabel}</span>`;
+  document.getElementById('modalTags').innerHTML = c.tags.map(t => `<span class="modal-tag ${catClass(t)}">${t}</span>`).join('') + `<span class="modal-tag${c.prize === 0 ? ' is-training' : ''}">${c.prizeLabel}</span>`;
   document.getElementById('modalMeta').innerHTML = `
     <div class="modal-meta-item"><label>Deadline</label><span>${new Date(c.deadline).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})}</span></div>
     <div class="modal-meta-item"><label>Preisgeld</label><span>${c.prizeLabel}</span></div>
@@ -1603,13 +1682,14 @@ function updateReelPositions(animate) {
 
 function renderReelText(animate) {
   const t = TESTIMONIALS[reelIdx];
+  const authorLine = t.uni ? `${t.author} · ${t.uni}` : t.author;
   document.getElementById('reelSizerQ').textContent = t.quote;
-  document.getElementById('reelSizerA').textContent = t.author;
+  document.getElementById('reelSizerA').textContent = authorLine;
   const live = document.getElementById('reelLive');
   live.classList.remove('exiting');
   live.innerHTML = `
     <p class="reel-quote">${charSpans(t.quote, 0, 6)}</p>
-    <p class="reel-author">${charSpans(t.author, t.quote.length + 6, 6)}</p>
+    <p class="reel-author">${charSpans(authorLine, t.quote.length + 6, 6)}</p>
   `;
 }
 
@@ -1688,12 +1768,68 @@ function scrollToSection(id) {
 function showHome(e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
 // ── FORM ──
+const CONTACT_CONTENT = {
+  unternehmen: {
+    label: 'Für Unternehmen',
+    heading: 'Stell deine Challenge',
+    intro: 'Nutze das kreative Potenzial von Studierenden aus ganz Deutschland und gewinne frische Perspektiven für deine echten Herausforderungen.',
+    steps: [
+      ['Anfrage einreichen', 'Beschreibe kurz dein Unternehmen und deine Challenge-Idee.'],
+      ['Erstgespräch', 'Wir melden uns und stimmen einen Termin ab.'],
+      ['Challenge live schalten', 'Wir begleiten dich durch den gesamten Prozess.']
+    ],
+    orgLabel: 'Unternehmen', orgPlaceholder: 'Dein Unternehmen',
+    msgLabel: 'Challenge-Idee (optional)'
+  },
+  partner: {
+    label: 'Für Partner',
+    heading: 'Werde Netzwerk-Partner',
+    intro: 'Bring deine Initiative oder Organisation ins meedup-Netzwerk und erreiche gemeinsam mit uns Studierende aus ganz Deutschland.',
+    steps: [
+      ['Anfrage einreichen', 'Erzähl uns kurz von deiner Initiative oder Organisation.'],
+      ['Kennenlernen', 'Wir melden uns und stimmen einen Termin ab.'],
+      ['Kooperation starten', 'Wir planen gemeinsam die nächsten Schritte.']
+    ],
+    orgLabel: 'Initiative / Organisation', orgPlaceholder: 'Deine Initiative',
+    msgLabel: 'Worum geht\u2019s? (optional)'
+  }
+};
+
+function setContactType(type) {
+  const c = CONTACT_CONTENT[type];
+  if (!c) return;
+  document.getElementById('contactType').value = type;
+  document.querySelectorAll('.type-pill').forEach(p =>
+    p.classList.toggle('active', p.dataset.type === type)
+  );
+  document.getElementById('contactLabel').textContent = c.label;
+  document.getElementById('contactHeading').textContent = c.heading;
+  document.getElementById('contactIntro').textContent = c.intro;
+  document.getElementById('contactSteps').innerHTML = c.steps.map((s, i) => `
+    <div class="contact-step">
+      <div class="step-num">${i + 1}</div>
+      <div class="step-text"><strong>${s[0]}</strong> – ${s[1]}</div>
+    </div>`).join('');
+  document.getElementById('orgLabel').textContent = c.orgLabel;
+  document.getElementById('orgInput').placeholder = c.orgPlaceholder;
+  document.getElementById('msgLabel').textContent = c.msgLabel;
+}
+
+function openContact(type) {
+  setContactType(type);
+  scrollToSection('contact-section');
+}
+
 function submitContactForm(e) {
   e.preventDefault();
   const btn = e.target.querySelector('button[type=submit]');
   btn.textContent = '✓ Anfrage gesendet!';
   btn.style.background = '#3f5410';
-  setTimeout(() => { btn.textContent = 'Termin anfragen →'; btn.style.background = ''; e.target.reset(); }, 3500);
+  setTimeout(() => {
+    btn.textContent = 'Termin anfragen →'; btn.style.background = '';
+    e.target.reset();
+    setContactType('unternehmen');
+  }, 3500);
 }
 
 // ── REVEAL ANIMATION ──
