@@ -896,28 +896,29 @@ footer { background: var(--navy); padding: 56px 0 32px; }
     </a>
 
     <div class="nav-links">
-      <button class="nav-link" onclick="openContact('unternehmen')">Unternehmen</button>
-      <button class="nav-link" onclick="openContact('partner')">Partner</button>
+      <button class="nav-link" onclick="scrollToSection('students-section')">Studierende</button>
+      <button class="nav-link" onclick="scrollToSection('challenges-section')">Challenges</button>
       <div class="nav-dropdown">
         <button class="nav-link">Über uns <span class="arrow">▾</span></button>
         <div class="nav-dropdown-panel">
           <div class="nav-dropdown-panel-inner">
-            <button class="dropdown-item" onclick="scrollToSection('about-section')">
-              <strong>meedup</strong>
-              <span>Wer wir sind und wofür wir stehen</span>
-            </button>
             <button class="dropdown-item" onclick="scrollToSection('testimonials-section')">
               <strong>Erfahrungsberichte</strong>
               <span>Stimmen aus echten Challenges</span>
             </button>
+            <button class="dropdown-item" onclick="scrollToSection('about-section')">
+              <strong>meedup</strong>
+              <span>Wer wir sind und wofür wir stehen</span>
+            </button>
           </div>
         </div>
       </div>
-      <button class="nav-link" onclick="scrollToSection('contact-section')">Kontakt</button>
+      <button class="nav-link" onclick="openContact('unternehmen')">Unternehmen</button>
+      <button class="nav-link" onclick="openContact('partner')">Partner</button>
     </div>
 
     <div class="nav-actions">
-      <a href="#" class="nav-register nav-register-contrast" onclick="event.preventDefault();scrollToSection('challenges-section')">Challenges entdecken</a>
+      <a href="#" class="nav-register nav-register-contrast" onclick="event.preventDefault();scrollToSection('contact-section')">Kontakt aufnehmen</a>
     </div>
   </div>
 </nav>
@@ -1218,7 +1219,7 @@ footer { background: var(--navy); padding: 56px 0 32px; }
       </div>
     </div>
     <div class="footer-bottom">
-      <span class="footer-copy">© 2026 meedup – Lukas Jannik Achenbach &amp; Schedi Samet GbR</span>
+      <span class="footer-copy">meedup 2026</span>
       <div class="footer-legal">
         <a href="impressum.html">Impressum</a>
         <a href="datenschutz.html">Datenschutz</a>
