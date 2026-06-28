@@ -425,14 +425,36 @@ body {
 .challenge-city-tag {
   background: rgba(0,0,0,.22); color: #fff;
   font-weight: 500; font-size: 13px; padding: 7px 12px;
-  border-radius: 999px; backdrop-filter: blur(4px);
+  border-radius: 999px; backdrop-filter: blur(4px); white-space: nowrap;
 }
+.challenge-toptags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; max-width: 64%; }
+.challenge-mode-tag {
+  font-weight: 600; font-size: 12.5px; padding: 7px 12px; border-radius: 999px;
+  backdrop-filter: blur(4px); white-space: nowrap;
+}
+.challenge-mode-tag.is-online { background: rgba(29,78,216,.9); color: #fff; }
+.challenge-mode-tag.is-local { background: rgba(15,118,110,.92); color: #fff; }
+.modal-tag.is-mode-online { background: #dbe9ff; color: #1d4ed8; font-weight: 700; }
+.modal-tag.is-mode-local { background: #dcf3ee; color: #0f766e; font-weight: 700; }
 .challenge-card-body { padding: 22px; display: flex; flex-direction: column; flex: 1; }
+/* abgeschlossene Challenges */
+.challenge-done-badge {
+  position: absolute; left: 18px; bottom: 14px; z-index: 2;
+  background: var(--dark); color: #fff; font-weight: 700; font-size: 12.5px;
+  padding: 6px 12px; border-radius: 999px; letter-spacing: .02em;
+}
+.challenge-card.is-done { opacity: .6; transition: opacity .25s, transform .25s; }
+.challenge-card.is-done .challenge-card-img { filter: grayscale(1); }
+.challenge-card.is-done:hover { opacity: 1; }
+.challenge-card.is-done:hover .challenge-card-img { filter: grayscale(0); }
+.modal-tag.is-done-tag { background: var(--dark); color: #fff; font-weight: 700; }
+.challenge-logo img { width: 100%; height: 100%; object-fit: contain; padding: 3px; background: #fff; }
+.modal-logo img { width: 100%; height: 100%; object-fit: contain; padding: 4px; background: #fff; }
 .challenge-meta { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
 .challenge-logo {
   width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center;
   justify-content: center; font-size: 12px; font-weight: 700;
-  color: var(--navy); background: #ecedf4;
+  color: var(--navy); background: #ecedf4; overflow: hidden;
 }
 .challenge-company { font-size: 14px; font-weight: 600; color: var(--muted); }
 .challenge-date-tag {
@@ -628,6 +650,34 @@ body {
 .partner-logo-item img { height: 48px; object-fit: contain; filter: grayscale(1); }
 .partner-logo-text { font-size: 1.4rem; font-weight: 800; letter-spacing: -.02em; color: var(--navy); white-space: nowrap; }
 
+/* ── FAQ ── */
+#faq-section { padding: 100px 0; background: var(--bg); }
+.faq-inner { max-width: 820px; margin: 0 auto; padding: 0 40px; }
+.faq-head { text-align: center; margin-bottom: 48px; }
+.faq-group { margin-bottom: 34px; }
+.faq-group-title {
+  font-size: 13px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--navy); opacity: .55; margin: 0 0 14px 4px;
+}
+.faq-item {
+  background: #fff; border: 1px solid rgba(45,66,86,.1);
+  border-radius: 14px; margin-bottom: 10px; overflow: hidden;
+  transition: border-color .2s;
+}
+.faq-item[open] { border-color: rgba(45,66,86,.25); }
+.faq-item summary {
+  list-style: none; cursor: pointer; padding: 18px 22px;
+  font-weight: 600; font-size: 16px; color: var(--navy);
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: '+'; font-size: 24px; font-weight: 300; color: var(--muted);
+  transition: transform .2s; flex-shrink: 0; line-height: 1;
+}
+.faq-item[open] summary::after { transform: rotate(45deg); }
+.faq-answer { padding: 0 22px 20px; color: #3f5160; line-height: 1.65; font-size: 15px; }
+
 /* ── KONTAKT / TERMIN ── */
 #contact-section { background: #fff; padding: 110px 0; }
 .contact-inner { max-width: 1320px; margin: 0 auto; padding: 0 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
@@ -707,7 +757,7 @@ body {
 
 /* ── ABOUT ── */
 #about-section { padding: 110px 0; background: var(--bg); }
-.about-inner { max-width: 1320px; margin: 0 auto; padding: 0 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.about-inner { max-width: 860px; margin: 0 auto; padding: 0 40px; }
 .about-text h2 { font-size: clamp(32px,3.6vw,48px); font-weight: 700; letter-spacing: -.025em; margin: 0 0 20px; }
 .about-text p { font-size: 17px; color: var(--muted); line-height: 1.75; margin: 0 0 20px; }
 .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -975,8 +1025,8 @@ footer { background: var(--navy); padding: 56px 0 32px; }
       <div class="stats-bar-desc">Durchgeführte Challenges</div>
     </div>
     <div class="stats-bar-tile">
-      <div class="stats-bar-num" style="font-size:clamp(24px,3vw,36px)">Deutschlandweit</div>
-      <div class="stats-bar-desc">Hochschulen aus ganz Deutschland</div>
+      <div class="stats-bar-num" data-target="100" data-suffix="%">0</div>
+      <div class="stats-bar-desc">Kostenlos für Studierende</div>
     </div>
   </div>
 </section>
@@ -1088,12 +1138,6 @@ footer { background: var(--navy); padding: 56px 0 32px; }
       <p style="font-size:17px;color:var(--muted);line-height:1.75;margin:0 0 32px">Durch strukturierte Challenges ermöglichen wir Studierenden echte Praxiserfahrung, während Unternehmen frische Perspektiven und innovative Lösungsansätze gewinnen.</p>
       <button class="btn btn-navy" onclick="scrollToSection('contact-section')">Kontakt aufnehmen</button>
     </div>
-    <div class="about-stats reveal">
-      <div class="stat-card"><div class="stat-number" data-target="10000" data-suffix="+">0</div><div class="stat-label">Engagierte Studierende</div></div>
-      <div class="stat-card"><div class="stat-number" data-target="20" data-suffix="+">0</div><div class="stat-label">Initiativen in ganz Deutschland</div></div>
-      <div class="stat-card"><div class="stat-number" data-target="100" data-suffix="%">0</div><div class="stat-label">Kostenlos für Studierende</div></div>
-      <div class="stat-card"><div class="stat-number" data-target="4" data-suffix="+">0</div><div class="stat-label">Durchgeführte Challenges</div></div>
-    </div>
   </div>
 </section>
 
@@ -1102,6 +1146,49 @@ footer { background: var(--navy); padding: 56px 0 32px; }
   <div class="text-reveal-wrap">
     <div class="text-reveal-p" id="textReveal">
       <!-- words injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section id="faq-section">
+  <div class="faq-inner">
+    <div class="faq-head reveal">
+      <div class="label" style="justify-content:center">FAQ</div>
+      <h2 style="font-size:clamp(32px,3.6vw,48px);font-weight:700;letter-spacing:-.025em;margin:12px 0 0">Häufige Fragen</h2>
+    </div>
+
+    <div class="faq-group reveal">
+      <div class="faq-group-title">Für Studierende</div>
+      <details class="faq-item"><summary>Was ist eine Challenge?</summary><div class="faq-answer">Eine echte Aufgabe von einem echten Unternehmen, die du löst und mit der du dein Können zeigst.</div></details>
+      <details class="faq-item"><summary>Was kostet die Teilnahme?</summary><div class="faq-answer">Für Studierende ist alles komplett kostenlos.</div></details>
+      <details class="faq-item"><summary>Kann ich allein oder im Team teilnehmen?</summary><div class="faq-answer">Je nach Challenge kann beides möglich sein.</div></details>
+      <details class="faq-item"><summary>Brauche ich Vorkenntnisse oder ein bestimmtes Studienfach?</summary><div class="faq-answer">Jede Challenge hat einen anderen fachlichen Schwerpunkt. Solange keine expliziten Vorkenntnisse gefordert sind, lohnt es sich bei jeder Challenge, deine kreativen Ideen einzubringen.</div></details>
+      <details class="faq-item"><summary>Was ist eine „Training"-Challenge im Unterschied zu einer mit Preisgeld?</summary><div class="faq-answer">Training-Challenges haben kein Preisgeld, bringen dir aber trotzdem Praxis, Kontakte und einen echten Case fürs CV.</div></details>
+      <details class="faq-item"><summary>Wie werde ich bewertet und wie gewinnt man?</summary><div class="faq-answer">Eine bestimmte Anzahl an Einreichungen kommt durch die Vorauswahl in den Pitch-Termin. Dort werden die besten Einreichungen vor einer Jury des Unternehmens vorgetragen, die nach eigenen, vorab festgelegten inhaltlichen Kriterien bewertet.</div></details>
+      <details class="faq-item"><summary>Was habe ich konkret davon?</summary><div class="faq-answer">Echte Cases fürs CV, Kontakte zu Unternehmen sowie Preise und die Aufmerksamkeit echter Recruiter.</div></details>
+      <details class="faq-item"><summary>Wer sieht meine Lösung und meine Daten?</summary><div class="faq-answer">Das Unternehmen der jeweiligen Challenge erhält Einsicht in die relevanten Angaben. Eine Weitergabe an unbeteiligte Dritte findet nicht statt.</div></details>
+    </div>
+
+    <div class="faq-group reveal">
+      <div class="faq-group-title">Für Unternehmen</div>
+      <details class="faq-item"><summary>Wie stelle ich eine Challenge ein?</summary><div class="faq-answer">In drei Schritten: Anfrage einreichen, Erstgespräch, Challenge live schalten.</div></details>
+      <details class="faq-item"><summary>Wie lange dauert eine Challenge?</summary><div class="faq-answer">Je nach Umfang sehr unterschiedlich – erfahrungsgemäß liegt die Regeldauer bei 4–8 Wochen.</div></details>
+      <details class="faq-item"><summary>Wem gehören die eingereichten Lösungen und Ideen?</summary><div class="faq-answer">Die Studierenden bleiben die Urheber ihrer Einreichungen. Für die Umsetzung werden die Nutzungsrechte an den Projekten vollständig auf das ausschreibende Unternehmen übertragen.</div></details>
+      <details class="faq-item"><summary>Wie komme ich an die Teilnehmenden und wie läuft das Recruiting?</summary><div class="faq-answer">Nach Ablauf einer Challenge erhalten Unternehmen Zugriff auf alle Einreichungen, um sämtliche Lösungsansätze zu sichten. Mit Einverständnis der Teilnehmenden können zusätzlich Kontaktdaten und Lebensläufe angefragt werden, sodass direkt ein Recruiting-Prozess eingeleitet werden kann.</div></details>
+    </div>
+
+    <div class="faq-group reveal">
+      <div class="faq-group-title">Für Partner</div>
+      <details class="faq-item"><summary>Wer kann Partner werden?</summary><div class="faq-answer">Initiativen und Organisationen, die ins meedup-Netzwerk wollen.</div></details>
+      <details class="faq-item"><summary>Was bringt eine Partnerschaft?</summary><div class="faq-answer">Partner können gemeinsam mit uns Challenges konzipieren, die zu ihren Angeboten passen, profitieren von frühzeitigem Zugang und können ihren Mitgliedern dadurch sichere Challenge-Plätze bieten.</div></details>
+      <details class="faq-item"><summary>Wie werde ich Partner?</summary><div class="faq-answer">In drei Schritten: Anfrage einreichen, Kennenlernen, Kooperation starten.</div></details>
+    </div>
+
+    <div class="faq-group reveal">
+      <div class="faq-group-title">Allgemein</div>
+      <details class="faq-item"><summary>Wer steckt hinter meedup?</summary><div class="faq-answer">meedup wird von einem kleinen, engagierten Team aufgebaut. Mehr zu unserer Mission findest du unter „Über uns", die vollständigen rechtlichen Angaben im Impressum.</div></details>
+      <details class="faq-item"><summary>Wie kann ich euch erreichen?</summary><div class="faq-answer">Per E-Mail an info@meedup.de – für Challenge-Einreichungen an challenge@meedup.de.</div></details>
     </div>
   </div>
 </section>
@@ -1322,7 +1409,7 @@ const CHALLENGES = [
     prize: 0, prizeLabel: 'Training',
     branche: 'Marketing',
     deadline: '2025-07-13', dateLabel: 'bis 13. Juli',
-    city: 'Deutschland',
+    city: 'Deutschland', mode: 'online',
     tags: ['Marketing', 'Social Media', 'Kreativ'],
     blurb: 'Entwickle eine Social-Media-Kampagne für meedup, die tatsächlich eingesetzt werden könnte – auf LinkedIn oder Instagram.',
     bg: "linear-gradient(160deg,rgba(45,66,86,.30),rgba(45,66,86,.06)), url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=900&q=70') center/cover",
@@ -1358,7 +1445,7 @@ const CHALLENGES = [
     prize: 0, prizeLabel: 'Training',
     branche: 'HR',
     deadline: '2025-07-20', dateLabel: 'bis 20. Juli',
-    city: 'Deutschland',
+    city: 'Deutschland', mode: 'online',
     tags: ['HR', 'Workplace', 'Strategie'],
     blurb: 'Was sind Benefits, die das Unternehmen mitbringen muss? Entwickle eine Strategie, wie man Mitarbeiter aus dem Home Office ins Büro bringt.',
     bg: "linear-gradient(160deg,rgba(45,66,86,.30),rgba(45,66,86,.06)), url('https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?auto=format&fit=crop&w=900&q=70') center/cover",
@@ -1382,6 +1469,64 @@ const CHALLENGES = [
     <div class="modal-section">
       <h3>Hintergrund</h3>
       <p>Die Arbeitswelt verändert sich rasant. Unternehmen kämpfen darum, Talente zu gewinnen und zu halten. Diese Challenge gibt dir die Chance, aus der Studierenden-Perspektive echten Unternehmenswert zu schaffen.</p>
+    </div>`
+  },
+  {
+    id: 2,
+    status: 'abgeschlossen',
+    title: 'Green-City Mainz',
+    company: 'Landeshauptstadt Mainz',
+    logo: 'MZ',
+    logoImg: 'Mainz_logo-2.svg',
+    prize: 600, prizeLabel: '600 €',
+    branche: 'Sustainability',
+    deadline: '2025-11-22', dateLabel: 'bis 22. November 2025',
+    city: 'Mainz', mode: 'local',
+    tags: ['Nachhaltigkeit', 'Concept'],
+    blurb: 'Wie können wir die Stadt Mainz gemeinsam grüner machen? Sei dabei und bring deine Idee auf das nächste Level!',
+    bg: "linear-gradient(160deg,rgba(45,66,86,.30),rgba(45,66,86,.06)), url('https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&w=900&q=70') center/cover",
+    detailBg: "https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&w=1400&q=80",
+    format: 'Konzept-Einreichung',
+    teilnahme: 'Einzel- oder Teamteilnahme möglich',
+    about: 'Die Landeshauptstadt Mainz engagiert sich für eine nachhaltige, lebenswerte Stadt und setzt dabei auf die Ideen junger Menschen.',
+    content: `<div class="modal-section">
+      <h3>Die Aufgabe</h3>
+      <p>Wie können wir die Stadt Mainz gemeinsam grüner machen? Entwickle ein umsetzbares Konzept, das die Stadt nachhaltiger und lebenswerter macht.</p>
+    </div>
+    <div class="modal-section">
+      <h3>Preise</h3>
+      <ul>
+        <li>1. Platz: 300 €</li>
+        <li>2. Platz: 200 €</li>
+        <li>3. Platz: 100 €</li>
+      </ul>
+    </div>`
+  },
+  {
+    id: 3,
+    status: 'abgeschlossen',
+    title: 'Society and Human Well-being',
+    company: 'William & Mary Global Innovation Challenge',
+    logo: 'WM',
+    logoImg: 'wmgic-logo1.png',
+    prize: 200, prizeLabel: '200 €',
+    branche: 'AI',
+    deadline: '2026-04-17', dateLabel: 'bis 17. April 2026',
+    city: 'USA/Deutschland', mode: 'online',
+    tags: ['AI', 'Education', 'Life Sciences', 'International', 'Sustainability'],
+    blurb: 'Arbeite in einem interkulturellen Team an Lösungen, um KI auf sinnvolle Weise in Bildung, Life Sciences und Nachhaltigkeit einzubringen.',
+    bg: "linear-gradient(160deg,rgba(45,66,86,.30),rgba(45,66,86,.06)), url('https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=900&q=70') center/cover",
+    detailBg: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1400&q=80",
+    format: 'Team-Einreichung (online)',
+    teilnahme: 'Internationale Teamteilnahme',
+    about: 'Die William & Mary Global Innovation Challenge (WMGIC) bringt Studierende weltweit zusammen, um interdisziplinär an globalen Herausforderungen zu arbeiten.',
+    content: `<div class="modal-section">
+      <h3>Die Aufgabe</h3>
+      <p>Arbeite in einem interkulturellen Team an Lösungen, um Künstliche Intelligenz auf sinnvolle und verantwortungsvolle Weise in die Bereiche Bildung, Life Sciences und Nachhaltigkeit einzubringen.</p>
+    </div>
+    <div class="modal-section">
+      <h3>Preis</h3>
+      <p>200 € für den ersten Platz.</p>
     </div>`
   }
 ];
@@ -1448,7 +1593,10 @@ function catClass(label) {
     socialmedia: 'cat-marketing', kreativ: 'cat-marketing',
     hr: 'cat-hr', workplace: 'cat-hr', strategie: 'cat-hr',
     it: 'cat-it', tech: 'cat-tech', design: 'cat-design',
-    nawi: 'cat-nawi', finance: 'cat-finance'
+    nawi: 'cat-nawi', finance: 'cat-finance',
+    sustainability: 'cat-nawi', nachhaltigkeit: 'cat-nawi', local: 'cat-nawi',
+    ai: 'cat-hr', education: 'cat-news', lifesciences: 'cat-it',
+    international: 'cat-finance', online: 'cat-default', concept: 'cat-default'
   };
   return map[k] || 'cat-default';
 }
@@ -1532,7 +1680,7 @@ function buildBenefits() {
 
 // ── CHALLENGES ──
 let fBranche = 'Alle', fPrice = 'Alle', fSort = 'Frist';
-const BRANCHEN = ['Alle','Marketing','HR','Tech','Design','NaWi','Finance'];
+const BRANCHEN = ['Alle','Marketing','HR','Tech','AI','Sustainability','Design','NaWi','Finance'];
 const PRICES = ['Alle','Training','Mit Preisgeld'];
 
 function toggleFilters() {
@@ -1562,16 +1710,25 @@ function renderChallenges() {
   if (fBranche !== 'Alle') cs = cs.filter(c => c.branche === fBranche);
   if (fPrice === 'Training') cs = cs.filter(c => c.prize === 0);
   if (fPrice === 'Mit Preisgeld') cs = cs.filter(c => c.prize > 0);
+  // abgeschlossene Challenges immer ans Ende
+  cs.sort((a, b) => (a.status === 'abgeschlossen' ? 1 : 0) - (b.status === 'abgeschlossen' ? 1 : 0));
   document.getElementById('resultCount').textContent = cs.length;
-  document.getElementById('challengesGrid').innerHTML = cs.map(c => `
-    <div class="challenge-card" onclick="openModal(${c.id})">
+  document.getElementById('challengesGrid').innerHTML = cs.map(c => {
+    const done = c.status === 'abgeschlossen';
+    const logoInner = c.logoImg ? `<img src="${c.logoImg}" alt="${c.company}">` : c.logo;
+    return `
+    <div class="challenge-card${done ? ' is-done' : ''}" onclick="openModal(${c.id})">
       <div class="challenge-card-img" style="background:${c.bg}">
+        ${done ? '<span class="challenge-done-badge">✓ Abgeschlossen</span>' : ''}
         <span class="challenge-prize-tag${c.prize === 0 ? ' is-training' : ''}">${c.prizeLabel}</span>
-        <span class="challenge-city-tag">📍 ${c.city}</span>
+        <span class="challenge-toptags">
+          ${c.mode ? `<span class="challenge-mode-tag is-${c.mode}">${c.mode === 'online' ? '🌐 Online' : '📍 Local'}</span>` : ''}
+          <span class="challenge-city-tag">${c.city}</span>
+        </span>
       </div>
       <div class="challenge-card-body">
         <div class="challenge-meta">
-          <div class="challenge-logo">${c.logo}</div>
+          <div class="challenge-logo">${logoInner}</div>
           <span class="challenge-company">${c.company}</span>
           <span class="challenge-date-tag">${c.dateLabel}</span>
         </div>
@@ -1579,8 +1736,8 @@ function renderChallenges() {
         <p class="challenge-blurb">${c.blurb}</p>
         <div class="challenge-tags">${c.tags.map(t => `<span class="challenge-tag ${catClass(t)}">${t}</span>`).join('')}</div>
       </div>
-    </div>
-  `).join('') || '<div style="grid-column:1/-1;text-align:center;padding:60px;color:rgba(255,255,255,.5)">Keine Challenges gefunden.</div>';
+    </div>`;
+  }).join('') || '<div style="grid-column:1/-1;text-align:center;padding:60px;color:rgba(255,255,255,.5)">Keine Challenges gefunden.</div>';
   observeReveal();
 }
 
@@ -1591,10 +1748,12 @@ function openModal(id) {
   document.getElementById('modalHero').style.backgroundImage = `url('${c.detailBg}')`;
   document.getElementById('modalHero').style.backgroundSize = 'cover';
   document.getElementById('modalHero').style.backgroundPosition = 'center';
-  document.getElementById('modalLogo').textContent = c.logo;
+  document.getElementById('modalLogo').innerHTML = c.logoImg ? `<img src="${c.logoImg}" alt="${c.company}">` : c.logo;
   document.getElementById('modalCompanyName').textContent = c.company;
   document.getElementById('modalTitle').textContent = c.title;
-  document.getElementById('modalTags').innerHTML = c.tags.map(t => `<span class="modal-tag ${catClass(t)}">${t}</span>`).join('') + `<span class="modal-tag${c.prize === 0 ? ' is-training' : ''}">${c.prizeLabel}</span>`;
+  const doneTag = c.status === 'abgeschlossen' ? '<span class="modal-tag is-done-tag">✓ Abgeschlossen</span>' : '';
+  const modeTag = c.mode ? `<span class="modal-tag is-mode-${c.mode}">${c.mode === 'online' ? '🌐 Online' : '📍 Local'}</span>` : '';
+  document.getElementById('modalTags').innerHTML = doneTag + modeTag + c.tags.map(t => `<span class="modal-tag ${catClass(t)}">${t}</span>`).join('') + `<span class="modal-tag${c.prize === 0 ? ' is-training' : ''}">${c.prizeLabel}</span>`;
   document.getElementById('modalMeta').innerHTML = `
     <div class="modal-meta-item"><label>Deadline</label><span>${new Date(c.deadline).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})}</span></div>
     <div class="modal-meta-item"><label>Preisgeld</label><span>${c.prizeLabel}</span></div>
