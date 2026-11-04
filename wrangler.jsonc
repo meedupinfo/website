@@ -1,0 +1,1 @@
+{"$schema":"node_modules/wrangler/config-schema.json","name":"website","compatibility_date":"2026-11-03","observability":{"enabled":true},"assets":{"directory":"."}}
