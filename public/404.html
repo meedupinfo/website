@@ -11,6 +11,15 @@
 <link rel="preload" href="/assets/fonts/switzer-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/switzer-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/meedup.css">
+<script>
+// Bewegung nur ohne "Bewegung reduzieren". Fällt sie aus, bleibt die Seite nach kurzer Zeit trotzdem sichtbar.
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  document.documentElement.classList.add("motion");
+  setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
+}
+</script>
+<script src="/assets/vendor/lenis.min.js" defer></script>
+<script src="/assets/meedup.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>

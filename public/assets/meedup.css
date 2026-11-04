@@ -229,3 +229,37 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
   * { transition: none !important; }
 }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Bewegung. Nur aktiv mit Klasse .motion, die das Inline-Skript im head setzt (nicht bei "Bewegung reduzieren"). */
+:root { --ease: cubic-bezier(0.22, 1, 0.36, 1); }
+.motion .site-header { position: sticky; top: 0; z-index: 50; background: var(--meedup-bg); transition: transform 0.6s var(--ease); }
+.site-header.away { transform: translateY(-100%); }
+.motion body { animation: page-in 0.5s ease both; }
+@keyframes page-in { from { opacity: 0; } }
+.motion :is(h1, .big):not(.split) { visibility: hidden; }
+.motion .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0.1em 0 0.12em; margin: -0.1em 0 -0.12em; }
+.motion .w > span { display: inline-block; transform: translateY(110%); transition: transform 1s var(--ease); }
+.motion .in .w > span { transform: none; }
+.motion .big .chip { transform: scale(0) rotate(-20deg); transition: transform 0.8s var(--ease); }
+.motion .big.in .chip { transform: none; }
+.motion :is(.sub, .actions, .section-title, .lead, .tile:not(.empty), .panel, .facts li, .rows h3, .rows li, .faq details, .process li, form) {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); transition-delay: var(--d, 0ms);
+}
+.motion :is(.sub, .actions, .section-title, .lead, .tile:not(.empty), .panel, .facts li, .rows h3, .rows li, .faq details, .process li, form).in { opacity: 1; transform: none; }
+.motion .section-title .w > span { transition-duration: 0.9s; }
+a.tile img { transition: scale 0.8s var(--ease); }
+a.tile:hover img { scale: 1.04; }
+.btn { transition: opacity 0.3s ease, background-color 0.3s ease; }
+@media (prefers-reduced-motion: no-preference) {
+  @supports (interpolate-size: allow-keywords) {
+    :root { interpolate-size: allow-keywords; }
+    .faq details::details-content { block-size: 0; overflow: clip; transition: block-size 0.5s var(--ease), content-visibility 0.5s allow-discrete; }
+    .faq details[open]::details-content { block-size: auto; }
+  }
+}
+
+/* Lenis (weiches Scrollen) */
+html.lenis, html.lenis body { height: auto; }
+.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
