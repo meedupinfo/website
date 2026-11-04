@@ -49,6 +49,7 @@
       <div>
         <button class="btn btn-primary" type="submit">Nachricht senden</button>
         <p class="hint">Beim Senden öffnet sich Ihr E-Mail-Programm mit der fertigen Nachricht.</p>
+        <p class="hint" id="status" role="status"></p>
       </div>
     </form>
   </div>
@@ -78,6 +79,8 @@ document.getElementById("kontakt").addEventListener("submit", function (e) {
     "\nOrganisation: " + f.get("Organisation") + "\n\n" + f.get("Nachricht");
   location.href = "mailto:info@meedup.de?subject=" + encodeURIComponent("Anfrage " + f.get("Typ") + ": " + f.get("Organisation")) +
     "&body=" + encodeURIComponent(body);
+  // mailto scheitert still ohne Mailprogramm oder bei sehr langen Nachrichten
+  document.getElementById("status").textContent = "Ihr E-Mail-Programm sollte sich jetzt öffnen. Falls nicht, schreiben Sie uns direkt an info@meedup.de.";
 });
 </script>
 </body>
