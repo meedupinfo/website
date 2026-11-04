@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kontakt · meedup</title>
+<meta name="description" content="Kontakt zu meedup für Unternehmen und Partner.">
+<link rel="canonical" href="https://meedup.de/kontakt/">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1922" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/outfit.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/meedup.css">
+</head>
+<body>
+<a class="skip" href="#inhalt">Zum Inhalt springen</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118"></a>
+    <nav aria-label="Hauptnavigation"><ul class="nav"><li><a href="/studierende/">Für Studierende</a></li><li><a href="/unternehmen/">Für Unternehmen</a></li><li><a href="/ueber-uns/">Über uns</a></li><li><a href="/kontakt/" aria-current="page">Kontakt</a></li></ul></nav>
+  </div>
+</header>
+<main id="inhalt">
+<section class="hero">
+  <div class="wrap narrow">
+    <span class="eyebrow">Kontakt</span>
+    <h1>Schreiben Sie uns.</h1>
+    <p class="lead">Ob Unternehmen oder Partner, wir freuen uns auf Ihre Nachricht. Sie erreichen uns auch direkt unter <a href="mailto:info@meedup.de">info@meedup.de</a>.</p>
+  </div>
+</section>
+<section class="section alt">
+  <div class="wrap narrow">
+    <form id="kontakt" action="mailto:info@meedup.de" method="post" enctype="text/plain">
+      <fieldset>
+        <legend>Ich schreibe als</legend>
+        <div class="segmented">
+          <input type="radio" id="typ-u" name="Typ" value="Unternehmen" checked><label for="typ-u">Unternehmen</label>
+          <input type="radio" id="typ-p" name="Typ" value="Partner"><label for="typ-p">Partner</label>
+        </div>
+      </fieldset>
+      <div><label for="name">Name</label><input type="text" id="name" name="Name" autocomplete="name" required></div>
+      <div><label for="email">E-Mail</label><input type="email" id="email" name="E-Mail" autocomplete="email" required></div>
+      <div><label for="org">Organisation</label><input type="text" id="org" name="Organisation" autocomplete="organization" required></div>
+      <div><label for="nachricht">Nachricht</label><textarea id="nachricht" name="Nachricht" required></textarea></div>
+      <div class="check">
+        <input type="checkbox" id="ds" name="Datenschutz" value="akzeptiert" required>
+        <label for="ds">Ich habe die <a href="/datenschutz/">Datenschutzerklärung</a> gelesen und bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage verwendet werden.</label>
+      </div>
+      <div>
+        <button class="btn btn-primary" type="submit">Nachricht senden</button>
+        <p class="hint">Beim Senden öffnet sich Ihr E-Mail-Programm mit der fertigen Nachricht.</p>
+      </div>
+    </form>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118" loading="lazy"></a>
+    <nav aria-label="Fußnavigation"><ul>
+      <li><a href="/studierende/">Für Studierende</a></li>
+      <li><a href="/unternehmen/">Für Unternehmen</a></li>
+      <li><a href="/ueber-uns/">Über uns</a></li>
+      <li><a href="/kontakt/">Kontakt</a></li>
+      <li><a href="https://www.linkedin.com/company/meedup" rel="noopener">LinkedIn</a></li>
+      <li><a href="/impressum/">Impressum</a></li>
+      <li><a href="/datenschutz/">Datenschutz</a></li>
+    </ul></nav>
+    <small>© 2026 meedup GbR</small>
+  </div>
+</footer>
+<script>
+// Baut aus dem Formular eine lesbare Mail statt des rohen mailto-POST.
+document.getElementById("kontakt").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var f = new FormData(this);
+  var body = "Typ: " + f.get("Typ") + "\nName: " + f.get("Name") + "\nE-Mail: " + f.get("E-Mail") +
+    "\nOrganisation: " + f.get("Organisation") + "\n\n" + f.get("Nachricht");
+  location.href = "mailto:info@meedup.de?subject=" + encodeURIComponent("Anfrage " + f.get("Typ") + ": " + f.get("Organisation")) +
+    "&body=" + encodeURIComponent(body);
+});
+</script>
+</body>
+</html>
