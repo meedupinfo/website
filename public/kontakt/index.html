@@ -6,10 +6,11 @@
 <title>Kontakt · meedup</title>
 <meta name="description" content="Kontakt zu meedup für Unternehmen und Partner.">
 <link rel="canonical" href="https://meedup.de/kontakt/">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0f1922" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f1ece4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1814" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/outfit.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/switzer-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/switzer-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/meedup.css">
 </head>
 <body>
@@ -22,14 +23,11 @@
 </header>
 <main id="inhalt">
 <section class="hero">
-  <div class="wrap narrow">
-    <span class="eyebrow">Kontakt</span>
-    <h1>Schreiben Sie uns.</h1>
-    <p class="lead">Ob Unternehmen oder Partner, wir freuen uns auf Ihre Nachricht. Sie erreichen uns auch direkt unter <a href="mailto:info@meedup.de">info@meedup.de</a>.</p>
-  </div>
-</section>
-<section class="section alt">
-  <div class="wrap narrow">
+  <div class="wrap form-grid">
+    <div>
+      <h1>Schreiben Sie uns</h1>
+      <p class="sub">Ob Unternehmen oder Partner, wir freuen uns auf Ihre Nachricht. Direkt erreichen Sie uns unter <a href="mailto:info@meedup.de">info@meedup.de</a>.</p>
+    </div>
     <form id="kontakt" action="mailto:info@meedup.de" method="post" enctype="text/plain">
       <fieldset>
         <legend>Ich schreibe als</legend>
@@ -47,7 +45,7 @@
         <label for="ds">Ich habe die <a href="/datenschutz/">Datenschutzerklärung</a> gelesen und bin einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage verwendet werden.</label>
       </div>
       <div>
-        <button class="btn btn-primary" type="submit">Nachricht senden</button>
+        <button class="btn" type="submit">Nachricht senden</button>
         <p class="hint">Beim Senden öffnet sich Ihr E-Mail-Programm mit der fertigen Nachricht.</p>
         <p class="hint" id="status" role="status"></p>
       </div>
@@ -60,12 +58,12 @@
     <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118" loading="lazy"></a>
     <nav aria-label="Fußnavigation"><ul>
       <li><a href="/studierende/">Für Studierende</a></li>
-      <li><a href="/unternehmen/">Für Unternehmen</a></li>
-      <li><a href="/ueber-uns/">Über uns</a></li>
-      <li><a href="/kontakt/">Kontakt</a></li>
-      <li><a href="https://www.linkedin.com/company/meedup" rel="noopener">LinkedIn</a></li>
       <li><a href="/impressum/">Impressum</a></li>
+      <li><a href="/unternehmen/">Für Unternehmen</a></li>
       <li><a href="/datenschutz/">Datenschutz</a></li>
+      <li><a href="/ueber-uns/">Über uns</a></li>
+      <li><a href="https://www.linkedin.com/company/meedup" rel="noopener">LinkedIn</a></li>
+      <li><a href="/kontakt/">Kontakt</a></li>
     </ul></nav>
     <small>© 2026 meedup GbR</small>
   </div>
