@@ -5,18 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Seite nicht gefunden · meedup</title>
 <meta name="description" content="Diese Seite gibt es nicht.">
-<meta name="theme-color" content="#f1ece4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1b1814" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eff4ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1d35" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/switzer-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/switzer-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/roboto-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/meedup.css">
 <script>
-// Bewegung nur ohne "Bewegung reduzieren". Fällt sie aus, bleibt die Seite nach kurzer Zeit trotzdem sichtbar.
-if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  document.documentElement.classList.add("motion");
-  setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
-}
+// Bewegung: "motion" immer mit JS, "reduce" wenn das System weniger Bewegung wünscht. Fällt das Skript aus, bleibt alles sichtbar.
+document.documentElement.classList.add("motion");
+if (matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("reduce");
+setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
 </script>
 <script src="/assets/vendor/lenis.min.js" defer></script>
 <script src="/assets/meedup.js" defer></script>
@@ -25,22 +24,33 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>
 <header class="site-header">
   <div class="wrap">
-    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118"></a>
+    <a class="logo" href="/" aria-label="meedup Startseite"><svg class="mark" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg><img src="/assets/logo.png" alt="" width="480" height="118"></a>
     <nav aria-label="Hauptnavigation"><ul class="nav"><li><a href="/studierende/">Für Studierende</a></li><li><a href="/unternehmen/">Für Unternehmen</a></li><li><a href="/ueber-uns/">Über uns</a></li><li><a href="/kontakt/">Kontakt</a></li></ul></nav>
   </div>
 </header>
 <main id="inhalt">
-<section class="hero">
+<section class="hero page-hero">
   <div class="wrap">
-    <h1>Diese Seite gibt es nicht</h1>
-    <p class="sub">Vielleicht hat sich die Adresse geändert. Auf der Startseite geht es weiter.</p>
-    <div class="actions"><a class="btn" href="/">Zur Startseite</a></div>
+    <div class="hero-panel">
+      <svg class="star" data-speed="0.18" style="--s:380px;--o:.12;right:-90px;top:-110px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <svg class="star" data-speed="-0.1" style="--s:200px;--o:.08;right:18%;bottom:-90px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <div>
+        <span class="eyebrow">Fehler 404</span>
+        <h1>Diese Seite gibt es nicht</h1>
+        <p class="lead">Vielleicht hat sich die Adresse geändert. Auf der Startseite geht es weiter.</p>
+        <div class="actions"><a class="btn" href="/">Zur Startseite</a></div>
+      </div>
+    </div>
   </div>
 </section>
 </main>
 <footer class="site-footer">
+  <svg class="star" data-speed="0.12" style="--s:420px;--o:.07;right:-120px;top:-140px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
   <div class="wrap">
-    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118" loading="lazy"></a>
+    <div>
+      <a class="logo" href="/" aria-label="meedup Startseite"><svg class="mark" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg><img src="/assets/logo.png" alt="" width="480" height="118" loading="lazy"></a>
+      <p class="tagline">talent meets future</p>
+    </div>
     <nav aria-label="Fußnavigation"><ul>
       <li><a href="/studierende/">Für Studierende</a></li>
       <li><a href="/impressum/">Impressum</a></li>

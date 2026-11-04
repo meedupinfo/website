@@ -6,18 +6,17 @@
 <title>Über uns · meedup</title>
 <meta name="description" content="meedup ist eine GbR von Schedi Samet und Lukas Jannik Achenbach, entstanden an der HAWK.">
 <link rel="canonical" href="https://meedup.de/ueber-uns/">
-<meta name="theme-color" content="#f1ece4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1b1814" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eff4ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1d35" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/switzer-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/switzer-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/roboto-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/meedup.css">
 <script>
-// Bewegung nur ohne "Bewegung reduzieren". Fällt sie aus, bleibt die Seite nach kurzer Zeit trotzdem sichtbar.
-if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  document.documentElement.classList.add("motion");
-  setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
-}
+// Bewegung: "motion" immer mit JS, "reduce" wenn das System weniger Bewegung wünscht. Fällt das Skript aus, bleibt alles sichtbar.
+document.documentElement.classList.add("motion");
+if (matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("reduce");
+setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
 </script>
 <script src="/assets/vendor/lenis.min.js" defer></script>
 <script src="/assets/meedup.js" defer></script>
@@ -26,44 +25,60 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>
 <header class="site-header">
   <div class="wrap">
-    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118"></a>
+    <a class="logo" href="/" aria-label="meedup Startseite"><svg class="mark" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg><img src="/assets/logo.png" alt="" width="480" height="118"></a>
     <nav aria-label="Hauptnavigation"><ul class="nav"><li><a href="/studierende/">Für Studierende</a></li><li><a href="/unternehmen/">Für Unternehmen</a></li><li><a href="/ueber-uns/" aria-current="page">Über uns</a></li><li><a href="/kontakt/">Kontakt</a></li></ul></nav>
   </div>
 </header>
 <main id="inhalt">
-<section class="hero">
+<section class="hero page-hero">
   <div class="wrap">
-    <h1>Studierende sollten nach dem beurteilt werden, was sie tun</h1>
-    <p class="sub">meedup ist an der HAWK entstanden. Heute sind wir eine GbR mit Sitz in Bingen am Rhein.</p>
+    <div class="hero-panel">
+      <svg class="star" data-speed="0.18" style="--s:380px;--o:.12;right:-90px;top:-110px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <svg class="star" data-speed="-0.1" style="--s:200px;--o:.08;right:18%;bottom:-90px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <div>
+        <span class="eyebrow">Über uns</span>
+        <h1>Studierende sollten nach dem beurteilt werden, was sie tun</h1>
+        <p class="lead">meedup ist an der HAWK entstanden. Heute sind wir eine GbR mit Sitz in Bingen am Rhein.</p>
+        
+      </div>
+    </div>
   </div>
 </section>
 <section class="section" aria-labelledby="team">
   <div class="wrap">
-    <h2 id="team" class="section-title">Wir sind meedup</h2>
-    <div class="panels">
-      <div class="panel person"><div class="initials bg-lavender" aria-hidden="true">SS</div><div><h3>Schedi Samet</h3><p class="muted">Gründer</p></div></div>
-      <div class="panel person"><div class="initials bg-mustard" aria-hidden="true">LA</div><div><h3>Lukas Jannik Achenbach</h3><p class="muted">Gründer</p></div></div>
+    <div class="section-head"><h2 id="team">Wir sind meedup</h2></div>
+    <div class="bento two">
+      <div class="cell person rv"><div class="avatar" style="background:var(--meedup-yale)" aria-hidden="true">SS</div><div><h3>Schedi Samet</h3><p>Gründer</p></div></div>
+      <div class="cell person rv"><div class="avatar" style="background:var(--meedup-fern)" aria-hidden="true">LA</div><div><h3>Lukas Jannik Achenbach</h3><p>Gründer</p></div></div>
     </div>
   </div>
 </section>
-<section class="statement">
+<section class="section">
   <div class="wrap">
-    <p class="big">Wir bauen Werkzeuge <span class="chip bg-olive" aria-hidden="true"></span> für das Studium und schaffen echte Aufgaben, an denen Studierende zeigen, was sie <span class="chip bg-terracotta" aria-hidden="true"></span> können.</p>
+    <div class="band">
+      <svg class="star" data-speed="0.2" style="--s:360px;--o:.1;left:-110px;top:-120px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <svg class="star" data-speed="-0.14" style="--s:260px;--o:.08;right:-70px;bottom:-110px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <p class="big" style="color:#fff;font-size:clamp(1.6rem,3.6vw,2.6rem);max-width:28ch;margin:0 auto">Wir bauen Werkzeuge für das Studium und schaffen echte Aufgaben, an denen Studierende zeigen, was sie können.</p>
+    </div>
   </div>
 </section>
 <section class="section" aria-label="Eckdaten">
   <div class="wrap">
-    <ol class="facts">
-      <li><div><h3>Entstanden an der HAWK</h3><p>Die Idee zu meedup ist im Studium entstanden.</p></div></li>
-      <li><div><h3>Sitz in Bingen am Rhein</h3><p>meedup ist eine GbR von Schedi Samet und Lukas Jannik Achenbach.</p></div></li>
-      <li><div><h3>Kostenlos für Studierende</h3><p>Unsere Tools sind frei nutzbar. Bezahlt wird meedup von Unternehmen.</p></div></li>
-    </ol>
+    <div class="bento three">
+      <div class="cell rv"><span class="pill">HAWK</span><h3>Entstanden im Studium</h3><p>Die Idee zu meedup ist an der HAWK entstanden.</p></div>
+      <div class="cell tint rv"><span class="pill">GbR</span><h3>Sitz in Bingen am Rhein</h3><p>meedup ist eine GbR von Schedi Samet und Lukas Jannik Achenbach.</p></div>
+      <div class="cell yale rv"><span class="pill">Kostenlos</span><h3>Für Studierende frei</h3><p>Unsere Tools sind frei nutzbar. Bezahlt wird meedup von Unternehmen.</p></div>
+    </div>
   </div>
 </section>
 </main>
 <footer class="site-footer">
+  <svg class="star" data-speed="0.12" style="--s:420px;--o:.07;right:-120px;top:-140px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
   <div class="wrap">
-    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118" loading="lazy"></a>
+    <div>
+      <a class="logo" href="/" aria-label="meedup Startseite"><svg class="mark" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg><img src="/assets/logo.png" alt="" width="480" height="118" loading="lazy"></a>
+      <p class="tagline">talent meets future</p>
+    </div>
     <nav aria-label="Fußnavigation"><ul>
       <li><a href="/studierende/">Für Studierende</a></li>
       <li><a href="/impressum/">Impressum</a></li>

@@ -3,21 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>meedup</title>
-<meta name="description" content="meedup bringt Studierende und Unternehmen an echten Aufgaben zusammen. Kostenlose Tools für Studierende, Challenges für Unternehmen.">
+<title>meedup · talent meets future</title>
+<meta name="description" content="meedup bringt Studierende und Unternehmen an echten Aufgaben zusammen. Kostenlose Tools für Studierende, Challenges im Hackathon-Format für Unternehmen.">
 <link rel="canonical" href="https://meedup.de/">
-<meta name="theme-color" content="#f1ece4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1b1814" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eff4ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1d35" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/switzer-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/switzer-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/roboto-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/meedup.css">
 <script>
-// Bewegung nur ohne "Bewegung reduzieren". Fällt sie aus, bleibt die Seite nach kurzer Zeit trotzdem sichtbar.
-if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  document.documentElement.classList.add("motion");
-  setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
-}
+// Bewegung: "motion" immer mit JS, "reduce" wenn das System weniger Bewegung wünscht. Fällt das Skript aus, bleibt alles sichtbar.
+document.documentElement.classList.add("motion");
+if (matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("reduce");
+setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
 </script>
 <script src="/assets/vendor/lenis.min.js" defer></script>
 <script src="/assets/meedup.js" defer></script>
@@ -26,84 +25,121 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>
 <header class="site-header">
   <div class="wrap">
-    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118"></a>
+    <a class="logo" href="/" aria-label="meedup Startseite"><svg class="mark" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg><img src="/assets/logo.png" alt="" width="480" height="118"></a>
     <nav aria-label="Hauptnavigation"><ul class="nav"><li><a href="/studierende/">Für Studierende</a></li><li><a href="/unternehmen/">Für Unternehmen</a></li><li><a href="/ueber-uns/">Über uns</a></li><li><a href="/kontakt/">Kontakt</a></li></ul></nav>
   </div>
 </header>
 <main id="inhalt">
 <section class="hero">
   <div class="wrap">
-    <h1>Wir bringen Studierende und Unternehmen an echten Aufgaben zusammen</h1>
-    <p class="sub">Kostenlose Tools für Studierende. Challenges für Unternehmen. Entstanden an der HAWK.</p>
-    <div class="actions">
-      <a class="btn" href="/studierende/">Ich studiere</a>
-      <a class="btn btn-light" href="/unternehmen/">Wir sind ein Unternehmen</a>
+    <div class="hero-panel">
+      <svg class="star" data-speed="0.22" style="--s:460px;--o:.1;right:-140px;top:-160px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <svg class="star" data-speed="-0.12" style="--s:220px;--o:.08;left:42%;bottom:-120px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <div>
+        <span class="eyebrow">talent meets future</span>
+        <h1>Wir bringen Studierende und Unternehmen an echten Aufgaben zusammen</h1>
+        <p class="lead">Kostenlose Tools für Studierende. Challenges im Hackathon-Format für Unternehmen. Entstanden an der HAWK.</p>
+        <div class="actions">
+          <a class="btn" href="/studierende/">Ich studiere</a>
+          <a class="btn btn-ghost" href="/unternehmen/">Wir sind ein Unternehmen</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <svg class="star" data-speed="0.1" style="--s:300px;--o:.25;left:50%;top:50%;margin:-150px 0 0 -150px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+        <img class="shot" src="/assets/zapply.jpg" alt="" width="595" height="640">
+      </div>
     </div>
   </div>
 </section>
-<section aria-labelledby="tc">
-  <h2 id="tc" class="sr-only">Tools und Challenges</h2>
-  <div class="wrap tiles">
-    <a class="tile tile-shot bg-lavender" href="https://zapply.bewerbungs-tracker.workers.dev" rel="noopener">
-      <img src="/assets/zapply.jpg" alt="Ansicht von zapply mit einer Liste von Bewerbungen" width="595" height="640" loading="lazy">
-      <div class="label"><div><span class="tag live">Jetzt nutzen</span><h3>zapply! by meedup</h3><p>Deine Bewerbungen im Blick. Kostenlos für bis zu zehn Bewerbungen.</p></div><span class="arrow" aria-hidden="true">→</span></div>
-    </a>
-    <div class="tile bg-mustard">
-      <span class="tag">Ab Januar 2027</span>
-      <div><h3>Nebenjobrechner</h3><p>Was bleibt vom Nebenjob übrig, und wo liegt die Grenze zum Minijob?</p></div>
-    </div>
-    <div class="tile empty" aria-hidden="true"></div>
-    <div class="tile empty" aria-hidden="true"></div>
-    <div class="tile bg-olive">
-      <span class="tag">Ab Januar 2027</span>
-      <div><h3>Netzwerk-Tracker</h3><p>Wen hast du wo kennengelernt? Hier steht es, wenn du es brauchst.</p></div>
-    </div>
-    <a class="tile bg-terracotta" href="/studierende/#challenges">
-      <span class="tag">Bald</span>
-      <div><h3>Challenges im Hackathon-Format</h3><p>Echte Aufgaben aus Unternehmen, mit Preisgeld für die besten Lösungen.</p></div>
-    </a>
-  </div>
-</section>
-<section class="statement">
+<section class="section" aria-labelledby="tools">
   <div class="wrap">
-    <p class="big">Wir bauen kostenlose Tools <span class="chip bg-lavender" aria-hidden="true"></span> für Studierende, aus denen eine Community <span class="chip bg-mustard" aria-hidden="true"></span> wächst. Unternehmen stellen ihr echte <span class="chip bg-olive" aria-hidden="true"></span> Aufgaben.</p>
+    <div class="section-head"><h2 id="tools">Tools, die im Studium helfen</h2><p>Kostenlos und ohne Tracking. Das erste ist schon live, weitere folgen.</p></div>
+    <div class="bento">
+      <a class="cell feature span-2 tall rv" href="https://zapply.bewerbungs-tracker.workers.dev" rel="noopener">
+        <span class="pill live">Jetzt nutzen</span>
+        <h3>zapply! by meedup</h3>
+        <p>Behalte deine Bewerbungen im Blick. Status per Klick, Verlauf als Diagramm. Kostenlos für bis zu zehn Bewerbungen.</p>
+        <span class="more">zapply öffnen <span aria-hidden="true">→</span></span>
+        <img class="shot" src="/assets/zapply.jpg" alt="Ansicht von zapply mit einer Liste von Bewerbungen" width="595" height="640" loading="lazy">
+      </a>
+      <div class="cell tint rv">
+        <svg class="star" data-speed="0.08" style="--s:150px;--o:.1;right:-40px;bottom:-50px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+        <span class="pill">Ab Januar 2027</span>
+        <h3>Nebenjobrechner</h3>
+        <p>Was bleibt vom Nebenjob übrig, und wo liegt die Grenze zum Minijob?</p>
+      </div>
+      <div class="cell tint rv">
+        <svg class="star" data-speed="0.08" style="--s:150px;--o:.1;right:-40px;bottom:-50px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+        <span class="pill">Ab Januar 2027</span>
+        <h3>Netzwerk-Tracker</h3>
+        <p>Wen hast du wo kennengelernt? Hier steht es, wenn du es brauchst.</p>
+      </div>
+      <a class="cell fern span-2 rv" href="/studierende/#challenges">
+        <svg class="star" data-speed="0.12" style="--s:240px;--o:.14;right:-60px;top:-70px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+        <span class="pill">Bald</span>
+        <h3>Challenges im Hackathon-Format</h3>
+        <p>Echte Aufgaben aus Unternehmen, allein oder im Team. Mit Preisgeld für die besten Lösungen.</p>
+        <span class="more">Mehr erfahren <span aria-hidden="true">→</span></span>
+      </a>
+    </div>
   </div>
 </section>
-<section class="section" aria-labelledby="angebot">
+<section class="section" aria-labelledby="fuerwen">
   <div class="wrap">
-    <h2 id="angebot" class="section-title">Was wir machen</h2>
-    <div class="rows">
-      <h3>Für Studierende</h3>
-      <ul>
-        <li><a href="https://zapply.bewerbungs-tracker.workers.dev" rel="noopener">zapply! by meedup <small>Jetzt nutzen →</small></a></li>
-        <li><span>Nebenjobrechner <small>Ab Januar 2027</small></span></li>
-        <li><span>Netzwerk-Tracker <small>Ab Januar 2027</small></span></li>
-        <li><a href="/studierende/#challenges">Challenges im Hackathon-Format <small>Bald →</small></a></li>
-      </ul>
-      <h3>Für Unternehmen</h3>
-      <ul>
-        <li><a href="/unternehmen/">Mehr Sichtbarkeit für bestimmte Stellen <small>→</small></a></li>
-        <li><a href="/unternehmen/">Challenges für Lead-Positionen <small>→</small></a></li>
-        <li><a href="/kontakt/">Gespräch vereinbaren <small>→</small></a></li>
-      </ul>
+    <div class="section-head"><h2 id="fuerwen">Für wen ist meedup?</h2></div>
+    <div class="bento two">
+      <a class="cell rv" href="/studierende/">
+        <h3>Für Studierende</h3>
+        <ul class="checks">
+          <li>Kostenlose Tools für Bewerbung, Nebenjob und Netzwerk</li>
+          <li>Challenges mit Preisgeld, allein oder im Team</li>
+          <li>Kontakt zu Unternehmen, die genau dich suchen</li>
+        </ul>
+        <span class="more">Für Studierende <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="cell sea rv" href="/unternehmen/">
+        <svg class="star" data-speed="0.12" style="--s:260px;--o:.1;right:-70px;bottom:-90px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+        <h3>Für Unternehmen</h3>
+        <ul class="checks">
+          <li>Mehr Sichtbarkeit für bestimmte Stellen</li>
+          <li>Challenges, die zeigen, wer wirklich anpackt</li>
+          <li>Servicegebühr und Preisgeld klar getrennt</li>
+        </ul>
+        <span class="more">Für Unternehmen <span aria-hidden="true">→</span></span>
+      </a>
     </div>
   </div>
 </section>
 <section class="section" aria-labelledby="fragen">
   <div class="wrap">
-    <h2 id="fragen" class="section-title">Häufige Fragen</h2>
+    <div class="section-head"><h2 id="fragen">Häufige Fragen</h2></div>
     <div class="faq">
-      <details><summary>Was kostet meedup für Studierende?</summary><div><p>Nichts. Unsere Tools kannst du kostenlos nutzen, ohne Tracking und ohne Werbung.</p></div></details>
-      <details><summary>Was kostet eine Challenge für Unternehmen?</summary><div><p>Eine Challenge besteht aus zwei getrennten Posten. Die Servicegebühr geht an meedup und deckt Vorbereitung, Ausschreibung und Begleitung. Das Preisgeld geht vollständig an die Studierenden mit den besten Lösungen. Beides besprechen wir mit Ihnen im Erstgespräch.</p></div></details>
-      <details><summary>Wann starten die ersten Challenges?</summary><div><p>Wir führen Challenges Schritt für Schritt ein. Wer zuerst davon erfahren will, folgt uns auf <a href="https://www.linkedin.com/company/meedup" rel="noopener">LinkedIn</a>.</p></div></details>
-      <details><summary>Wer steckt hinter meedup?</summary><div><p>Schedi Samet und Lukas Jannik Achenbach. meedup ist an der HAWK entstanden und heute eine GbR mit Sitz in Bingen am Rhein. Mehr auf <a href="/ueber-uns/">Über uns</a>.</p></div></details>
+      <details class="rv"><summary>Was kostet meedup für Studierende?</summary><div><p>Nichts. Unsere Tools kannst du kostenlos nutzen, ohne Tracking und ohne Werbung.</p></div></details>
+      <details class="rv"><summary>Was kostet eine Challenge für Unternehmen?</summary><div><p>Eine Challenge besteht aus zwei getrennten Posten. Die Servicegebühr geht an meedup und deckt Vorbereitung, Vermarktung und Begleitung. Das Preisgeld geht vollständig an die Studierenden mit den besten Lösungen. Beides besprechen wir mit Ihnen im ersten Gespräch.</p></div></details>
+      <details class="rv"><summary>Wann starten die ersten Challenges?</summary><div><p>Wir führen Challenges Schritt für Schritt ein. Wer zuerst davon erfahren will, folgt uns auf <a href="https://www.linkedin.com/company/meedup" rel="noopener">LinkedIn</a>.</p></div></details>
+      <details class="rv"><summary>Wer steckt hinter meedup?</summary><div><p>Schedi Samet und Lukas Jannik Achenbach. meedup ist an der HAWK entstanden und heute eine GbR mit Sitz in Bingen am Rhein. Mehr auf <a href="/ueber-uns/">Über uns</a>.</p></div></details>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="band rv">
+      <svg class="star" data-speed="0.2" style="--s:360px;--o:.1;left:-110px;top:-120px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <svg class="star" data-speed="-0.14" style="--s:260px;--o:.08;right:-70px;bottom:-110px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <h2>Lassen Sie uns über Ihre Aufgabe sprechen</h2>
+      <p>Erzählen Sie uns, wen Sie suchen. Wir melden uns persönlich bei Ihnen.</p>
+      <div class="actions"><a class="btn" href="/kontakt/">Kontakt aufnehmen</a></div>
     </div>
   </div>
 </section>
 </main>
 <footer class="site-footer">
+  <svg class="star" data-speed="0.12" style="--s:420px;--o:.07;right:-120px;top:-140px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
   <div class="wrap">
-    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118" loading="lazy"></a>
+    <div>
+      <a class="logo" href="/" aria-label="meedup Startseite"><svg class="mark" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg><img src="/assets/logo.png" alt="" width="480" height="118" loading="lazy"></a>
+      <p class="tagline">talent meets future</p>
+    </div>
     <nav aria-label="Fußnavigation"><ul>
       <li><a href="/studierende/">Für Studierende</a></li>
       <li><a href="/impressum/">Impressum</a></li>
