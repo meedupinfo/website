@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nebenjobrechner · meedup</title>
+<meta name="description" content="Was bleibt vom Nebenjob netto übrig? Minijob, Midijob, Werkstudent oder kurzfristig, mit Grenzen-Check, BAföG und Stipendium.">
+<link rel="canonical" href="https://meedup.de/nebenjobrechner/">
+<meta name="theme-color" content="#f1ece4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1814" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/switzer-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/switzer-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/meedup.css">
+<style>
+  .rechner { display: grid; gap: 24px; }
+  .rechner form { gap: 22px; }
+  .rechner input[type="number"], .rechner select {
+    width: 100%; font: inherit; color: var(--meedup-text); background: var(--meedup-bg);
+    border: 1px solid transparent; border-radius: 0; padding: 12px 14px;
+  }
+  .rechner input:focus-visible, .rechner select:focus-visible { border-color: var(--meedup-focus); }
+  .zwei { display: grid; gap: 18px; grid-template-columns: 1fr; }
+  @media (min-width: 560px) { .zwei { grid-template-columns: 1fr 1fr; } }
+  .ergebnis { display: grid; gap: var(--gap); }
+  .ergebnis .panel { background: var(--meedup-sand-1); }
+  .gross { font-size: clamp(2.8rem, 12vw, 5.5rem); font-weight: 600; letter-spacing: -0.05em; line-height: 1; }
+  .posten { list-style: none; margin: 0; padding: 0; }
+  .posten li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--meedup-sand-3); }
+  .posten li.summe { font-weight: 600; border-bottom: 0; }
+  .posten span:last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .ampeln { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .ampeln li { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; }
+  .ampeln p { margin: 0; grid-column: 2; }
+  .punkt { width: 14px; height: 14px; border-radius: 50%; margin-top: 4px; border: 2px solid var(--meedup-ink); }
+  .gruen .punkt { background: #2e9e4f; }
+  .gelb .punkt { background: #f2c230; }
+  .rot .punkt { background: #d1432b; }
+  .ampeln strong { font-weight: 600; }
+  .hinweis { font-size: 0.9rem; color: var(--meedup-muted); margin: 0; }
+  [hidden] { display: none !important; }
+</style>
+<script>
+// Bewegung nur ohne "Bewegung reduzieren". Fällt sie aus, bleibt die Seite nach kurzer Zeit trotzdem sichtbar.
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  document.documentElement.classList.add("motion");
+  setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
+}
+</script>
+<script src="/assets/vendor/lenis.min.js" defer></script>
+<script src="/assets/meedup.js" defer></script>
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#inhalt">Zum Inhalt springen</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118"></a>
+    <nav aria-label="Hauptnavigation"><ul class="nav"><li><a href="/studierende/">Für Studierende</a></li><li><a href="/unternehmen/">Für Unternehmen</a></li><li><a href="/ueber-uns/">Über uns</a></li><li><a href="/kontakt/">Kontakt</a></li></ul></nav>
+  </div>
+</header>
+<main id="inhalt">
+<section class="hero">
+  <div class="wrap">
+    <h1>Nebenjobrechner</h1>
+    <p class="sub">Was bleibt dir vom Nebenjob netto? Welche Grenze wird knapp? Und was passiert mit BAföG und Stipendium? Trag deine Daten ein, das Ergebnis rechnet sofort mit.</p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0">
+  <div class="wrap rechner">
+    <form id="eingaben" novalidate>
+      <div class="zwei">
+        <div>
+          <label for="jahr">Jahr</label>
+          <select id="jahr" name="jahr"></select>
+        </div>
+        <div>
+          <label for="alter">Dein Alter</label>
+          <input type="number" id="alter" name="alter" min="15" max="70" step="1" value="21" inputmode="numeric">
+        </div>
+      </div>
+
+      <fieldset>
+        <legend>Jobart</legend>
+        <div class="segmented">
+          <input type="radio" id="job-mini" name="jobart" value="minijob" checked><label for="job-mini">Minijob</label>
+          <input type="radio" id="job-midi" name="jobart" value="midijob"><label for="job-midi">Midijob</label>
+          <input type="radio" id="job-werk" name="jobart" value="werkstudent"><label for="job-werk">Werkstudent</label>
+          <input type="radio" id="job-kurz" name="jobart" value="kurzfristig"><label for="job-kurz">Kurzfristig</label>
+        </div>
+      </fieldset>
+
+      <div class="check" data-zeige="minijob">
+        <input type="checkbox" id="rvBefreit" name="rvBefreit">
+        <label for="rvBefreit">Ich habe mich von der Rentenversicherungspflicht befreien lassen</label>
+      </div>
+
+      <fieldset>
+        <legend>Verdienst angeben als</legend>
+        <div class="segmented">
+          <input type="radio" id="modus-monat" name="modus" value="monat" checked><label for="modus-monat">Monatsbrutto</label>
+          <input type="radio" id="modus-stunde" name="modus" value="stunde"><label for="modus-stunde">Stundenlohn</label>
+        </div>
+      </fieldset>
+
+      <div data-modus="monat">
+        <label for="brutto" id="brutto-label">Brutto pro Monat in Euro</label>
+        <input type="number" id="brutto" name="brutto" min="0" step="1" value="500" inputmode="decimal">
+        <p class="hint" data-nicht="kurzfristig">Bei schwankendem Lohn nimm den Durchschnitt übers Jahr.</p>
+      </div>
+      <div data-modus="stunde">
+        <label for="stundenlohn">Stundenlohn brutto in Euro</label>
+        <input type="number" id="stundenlohn" name="stundenlohn" min="0" step="0.01" inputmode="decimal">
+        <p class="hint" id="mindestlohn-hinweis"></p>
+      </div>
+
+      <div class="zwei" data-zeige="stunden">
+        <div>
+          <label for="stdVorlesung">Wochenstunden in der Vorlesungszeit</label>
+          <input type="number" id="stdVorlesung" name="stdVorlesung" min="0" max="80" step="0.5" value="10" inputmode="decimal">
+        </div>
+        <div data-nicht="kurzfristig">
+          <label for="stdFerien">Wochenstunden in den Semesterferien</label>
+          <input type="number" id="stdFerien" name="stdFerien" min="0" max="80" step="0.5" value="10" inputmode="decimal">
+        </div>
+        <div data-nicht="kurzfristig">
+          <label for="ferienWochen">Wochen Semesterferien im Jahr</label>
+          <input type="number" id="ferienWochen" name="ferienWochen" min="0" max="52" step="1" value="20" inputmode="numeric">
+          <p class="hint">Steht im Semesterkalender deiner Hochschule.</p>
+        </div>
+      </div>
+
+      <div data-zeige="kurzfristig">
+        <label for="monate">In wie vielen Monaten im Jahr arbeitest du?</label>
+        <input type="number" id="monate" name="monate" min="1" max="12" step="1" value="2" inputmode="numeric">
+      </div>
+
+      <fieldset>
+        <legend>Krankenversicherung</legend>
+        <div class="segmented">
+          <input type="radio" id="kv-fam" name="kv" value="familie" checked><label for="kv-fam">Familienversichert</label>
+          <input type="radio" id="kv-selbst" name="kv" value="selbst"><label for="kv-selbst">Selbst versichert</label>
+        </div>
+      </fieldset>
+
+      <div class="check" data-zeige="kinderlos">
+        <input type="checkbox" id="kinder" name="kinder">
+        <label for="kinder">Ich habe Kinder</label>
+      </div>
+
+      <fieldset>
+        <legend>Bekommst du Kindergeld?</legend>
+        <div class="segmented">
+          <input type="radio" id="kg-nein" name="kindergeld" value="nein" checked><label for="kg-nein">Nein</label>
+          <input type="radio" id="kg-ja" name="kindergeld" value="ja"><label for="kg-ja">Ja</label>
+        </div>
+      </fieldset>
+      <fieldset data-zeige="kindergeld">
+        <legend>Hast du schon eine Ausbildung oder ein Studium abgeschlossen?</legend>
+        <div class="segmented">
+          <input type="radio" id="erst-ja" name="erstausbildung" value="ja" checked><label for="erst-ja">Nein, ist meine erste</label>
+          <input type="radio" id="erst-nein" name="erstausbildung" value="nein"><label for="erst-nein">Ja</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Bekommst du BAföG?</legend>
+        <div class="segmented">
+          <input type="radio" id="bafoeg-nein" name="bafoeg" value="nein" checked><label for="bafoeg-nein">Nein</label>
+          <input type="radio" id="bafoeg-ja" name="bafoeg" value="ja"><label for="bafoeg-ja">Ja</label>
+        </div>
+      </fieldset>
+      <div data-zeige="bafoeg">
+        <label for="bafoegBetrag">Dein aktueller BAföG-Betrag pro Monat in Euro</label>
+        <input type="number" id="bafoegBetrag" name="bafoegBetrag" min="0" step="1" value="600" inputmode="decimal">
+        <p class="hint">So steht er im Bescheid, bevor dein Nebenjob angerechnet wird.</p>
+      </div>
+
+      <div>
+        <label for="stipendium">Stipendium</label>
+        <select id="stipendium" name="stipendium">
+          <option value="keins">Keins</option>
+          <option value="deutschland">Deutschlandstipendium</option>
+          <option value="begabt">Begabtenförderungswerk</option>
+          <option value="sonstig">Sonstiges Stipendium</option>
+        </select>
+      </div>
+      <div class="zwei" data-zeige="begabt">
+        <div>
+          <label for="grundstipendium">Grundstipendium pro Monat in Euro</label>
+          <input type="number" id="grundstipendium" name="grundstipendium" min="0" step="1" value="0" inputmode="decimal">
+        </div>
+        <div>
+          <label for="studienkosten">Studienkostenpauschale pro Monat in Euro</label>
+          <input type="number" id="studienkosten" name="studienkosten" min="0" step="1" inputmode="decimal">
+        </div>
+      </div>
+      <div data-zeige="sonstig">
+        <label for="stipBetrag">Stipendium pro Monat in Euro</label>
+        <input type="number" id="stipBetrag" name="stipBetrag" min="0" step="1" value="0" inputmode="decimal">
+      </div>
+    </form>
+
+    <div class="ergebnis" aria-live="polite" aria-atomic="false">
+      <div class="panel">
+        <p class="kicker">Das bleibt dir im Monat</p>
+        <p class="gross" id="gesamt">0 €</p>
+        <p class="hinweis" id="gesamt-text"></p>
+      </div>
+      <div class="panel">
+        <h2 class="kicker" style="font-size:0.9rem;letter-spacing:0">Dein Nebenjob</h2>
+        <ul class="posten" id="posten"></ul>
+        <p class="hinweis" id="steuer-hinweis"></p>
+      </div>
+      <div class="panel">
+        <h2 class="kicker" style="font-size:0.9rem;letter-spacing:0">Grenzen-Check</h2>
+        <ul class="ampeln" id="ampeln"></ul>
+      </div>
+      <div class="panel" id="bafoeg-panel" hidden>
+        <h2 class="kicker" style="font-size:0.9rem;letter-spacing:0">BAföG</h2>
+        <ul class="posten" id="bafoeg-posten"></ul>
+        <p class="hinweis" id="bafoeg-text"></p>
+      </div>
+      <div class="panel" id="stip-panel" hidden>
+        <h2 class="kicker" style="font-size:0.9rem;letter-spacing:0">Stipendium</h2>
+        <ul class="ampeln" id="stip-punkte"></ul>
+      </div>
+    </div>
+
+    <p class="hinweis" id="stand">Keine Steuer- oder Rechtsberatung.</p>
+    <p class="hinweis">Deine Eingaben bleiben in deinem Browser. Nichts wird gespeichert oder verschickt.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap rows">
+    <h3>Mehr Tools</h3>
+    <ul>
+      <li><a href="https://zapply.bewerbungs-tracker.workers.dev" rel="noopener">zapply! by meedup <small>Jetzt nutzen →</small></a></li>
+      <li><span>Netzwerk-Tracker <small>Ab Januar 2027</small></span></li>
+    </ul>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118" loading="lazy"></a>
+    <nav aria-label="Fußnavigation"><ul>
+      <li><a href="/studierende/">Für Studierende</a></li>
+      <li><a href="/impressum/">Impressum</a></li>
+      <li><a href="/unternehmen/">Für Unternehmen</a></li>
+      <li><a href="/datenschutz/">Datenschutz</a></li>
+      <li><a href="/ueber-uns/">Über uns</a></li>
+      <li><a href="https://www.linkedin.com/company/meedup" rel="noopener">LinkedIn</a></li>
+      <li><a href="/kontakt/">Kontakt</a></li>
+    </ul></nav>
+    <small>© 2026 meedup GbR</small>
+  </div>
+</footer>
+</body>
+</html>
