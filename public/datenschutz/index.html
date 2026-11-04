@@ -6,18 +6,17 @@
 <title>Datenschutz · meedup</title>
 <meta name="description" content="Datenschutzerklärung der meedup GbR.">
 <link rel="canonical" href="https://meedup.de/datenschutz/">
-<meta name="theme-color" content="#f1ece4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1b1814" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eff4ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1d35" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/switzer-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/switzer-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/roboto-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/meedup.css">
 <script>
-// Bewegung nur ohne "Bewegung reduzieren". Fällt sie aus, bleibt die Seite nach kurzer Zeit trotzdem sichtbar.
-if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  document.documentElement.classList.add("motion");
-  setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
-}
+// Bewegung: "motion" immer mit JS, "reduce" wenn das System weniger Bewegung wünscht. Fällt das Skript aus, bleibt alles sichtbar.
+document.documentElement.classList.add("motion");
+if (matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("reduce");
+setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
 </script>
 <script src="/assets/vendor/lenis.min.js" defer></script>
 <script src="/assets/meedup.js" defer></script>
@@ -26,7 +25,7 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>
 <header class="site-header">
   <div class="wrap">
-    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118"></a>
+    <a class="logo" href="/" aria-label="meedup Startseite"><svg class="mark" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg><img src="/assets/logo.png" alt="" width="480" height="118"></a>
     <nav aria-label="Hauptnavigation"><ul class="nav"><li><a href="/studierende/">Für Studierende</a></li><li><a href="/unternehmen/">Für Unternehmen</a></li><li><a href="/ueber-uns/">Über uns</a></li><li><a href="/kontakt/">Kontakt</a></li></ul></nav>
   </div>
 </header>
@@ -111,8 +110,12 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
 </div></div></section>
 </main>
 <footer class="site-footer">
+  <svg class="star" data-speed="0.12" style="--s:420px;--o:.07;right:-120px;top:-140px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
   <div class="wrap">
-    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118" loading="lazy"></a>
+    <div>
+      <a class="logo" href="/" aria-label="meedup Startseite"><svg class="mark" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg><img src="/assets/logo.png" alt="" width="480" height="118" loading="lazy"></a>
+      <p class="tagline">talent meets future</p>
+    </div>
     <nav aria-label="Fußnavigation"><ul>
       <li><a href="/studierende/">Für Studierende</a></li>
       <li><a href="/impressum/">Impressum</a></li>

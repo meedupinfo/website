@@ -6,18 +6,17 @@
 <title>Für Unternehmen · meedup</title>
 <meta name="description" content="Mehr Sichtbarkeit für Ihre Stellen und engagierte Talente für Lead-Positionen. Challenges im Hackathon-Format mit Studierenden.">
 <link rel="canonical" href="https://meedup.de/unternehmen/">
-<meta name="theme-color" content="#f1ece4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1b1814" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eff4ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1d35" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/switzer-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/switzer-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/roboto-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/meedup.css">
 <script>
-// Bewegung nur ohne "Bewegung reduzieren". Fällt sie aus, bleibt die Seite nach kurzer Zeit trotzdem sichtbar.
-if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  document.documentElement.classList.add("motion");
-  setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
-}
+// Bewegung: "motion" immer mit JS, "reduce" wenn das System weniger Bewegung wünscht. Fällt das Skript aus, bleibt alles sichtbar.
+document.documentElement.classList.add("motion");
+if (matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("reduce");
+setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
 </script>
 <script src="/assets/vendor/lenis.min.js" defer></script>
 <script src="/assets/meedup.js" defer></script>
@@ -26,29 +25,37 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>
 <header class="site-header">
   <div class="wrap">
-    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118"></a>
+    <a class="logo" href="/" aria-label="meedup Startseite"><svg class="mark" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg><img src="/assets/logo.png" alt="" width="480" height="118"></a>
     <nav aria-label="Hauptnavigation"><ul class="nav"><li><a href="/studierende/">Für Studierende</a></li><li><a href="/unternehmen/" aria-current="page">Für Unternehmen</a></li><li><a href="/ueber-uns/">Über uns</a></li><li><a href="/kontakt/">Kontakt</a></li></ul></nav>
   </div>
 </header>
 <main id="inhalt">
-<section class="hero">
+<section class="hero page-hero">
   <div class="wrap">
-    <h1>Sie suchen Menschen, die anpacken. Wir zeigen Ihnen, wer das ist.</h1>
-    <p class="sub">Für Unternehmen, die Stellen sichtbarer machen oder engagierte Talente für Lead-Positionen finden wollen.</p>
-    <div class="actions"><a class="btn" href="/kontakt/">Gespräch vereinbaren</a></div>
+    <div class="hero-panel">
+      <svg class="star" data-speed="0.18" style="--s:380px;--o:.12;right:-90px;top:-110px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <svg class="star" data-speed="-0.1" style="--s:200px;--o:.08;right:18%;bottom:-90px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <div>
+        <span class="eyebrow">Für Unternehmen</span>
+        <h1>Sie suchen Menschen, die anpacken. Wir zeigen Ihnen, wer das ist.</h1>
+        <p class="lead">Für Unternehmen, die Stellen sichtbarer machen oder engagierte Talente für Lead-Positionen finden wollen.</p>
+        <div class="actions"><a class="btn" href="/kontakt/">Gespräch vereinbaren</a></div>
+      </div>
+    </div>
   </div>
 </section>
 <section class="section" aria-labelledby="segmente">
   <div class="wrap">
-    <h2 id="segmente" class="section-title">Wobei wir helfen</h2>
-    <div class="panels">
-      <div class="panel">
-        <span class="kicker">Etablierte Unternehmen</span>
+    <div class="section-head"><h2 id="segmente">Wobei wir helfen</h2></div>
+    <div class="bento two">
+      <div class="cell rv">
+        <span class="pill">Etablierte Unternehmen</span>
         <h3>Ihre Stellen gehen in Jobbörsen unter</h3>
         <p>Gute Stellen verschwinden zwischen tausenden Anzeigen. meedup zeigt ausgewählte Stellen dort, wo Studierende ohnehin unterwegs sind: in unseren Tools und in unserer Community.</p>
       </div>
-      <div class="panel">
-        <span class="kicker">Innovative Unternehmen</span>
+      <div class="cell yale rv">
+        <svg class="star" data-speed="0.12" style="--s:240px;--o:.12;right:-60px;bottom:-80px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+        <span class="pill">Innovative Unternehmen</span>
         <h3>Ein Lebenslauf zeigt kein Engagement</h3>
         <p>Für Lead-Positionen brauchen Sie Eigeninitiative. In einer Challenge arbeiten Studierende an Ihrer echten Aufgabe. Sie sehen, wer anpackt, bevor Sie jemanden einstellen.</p>
       </div>
@@ -57,35 +64,44 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
 </section>
 <section class="section" aria-labelledby="ablauf">
   <div class="wrap">
-    <h2 id="ablauf" class="section-title">So läuft eine Challenge ab</h2>
-    <ol class="process">
-      <li><h3>Erstgespräch</h3><p>Sie erzählen uns, welche Aufgabe Sie haben und welche Menschen Sie suchen.</p></li>
-      <li><h3>Aufgabe festlegen</h3><p>Gemeinsam formulieren wir eine Aufgabe, die in kurzer Zeit lösbar ist und echte Einblicke gibt.</p></li>
-      <li><h3>Ausschreibung</h3><p>Wir stellen die Challenge unserer Community vor und sammeln die Anmeldungen.</p></li>
-      <li><h3>Hackathon</h3><p>Die Studierenden arbeiten allein oder im Team an Lösungen. Wir begleiten den Ablauf.</p></li>
-      <li><h3>Präsentation</h3><p>Die Teams stellen ihre Ergebnisse vor. Sie lernen die Besten persönlich kennen.</p></li>
+    <div class="section-head"><h2 id="ablauf">In fünf Schritten zum Challenge-Ergebnis</h2><p>Vom ersten Gespräch bis zur Auswertung. Sie lehnen sich zurück, wir kümmern uns um den Rest.</p></div>
+    <ol class="steps">
+      <li class="rv"><h3>Setup</h3><p>In einem ersten Meeting stellen wir Ihnen meedup vor. Wenn Sie begeistert sind, definieren wir anschließend über ein kurzes Formular gemeinsam alle wichtigen Randbedingungen und Ziele.</p></li>
+      <li class="rv"><h3>Planung</h3><p>In einem gemeinsamen Planungs-Meeting legen wir die finalen Details, den Zeitplan und das Budget fest. Anschließend senden wir Ihnen den Vertrag zu und bereiten nach Unterzeichnung alles für den Start vor.</p></li>
+      <li class="rv"><h3>Bearbeitung</h3><p>Wir vermarkten die Challenge zielgruppengenau und betreuen die Teilnehmenden bei allen Fragen. Sie lehnen sich zurück und erhalten von uns regelmäßige Status-Updates.</p></li>
+      <li class="rv"><h3>Pitch</h3><p>Nach Einsendeschluss sichten wir die Konzepte und übernehmen die Qualitätskontrolle. Die Top-Talente präsentieren Ihnen ihre Ideen im Live-Pitch, Ihre Jury kürt die Gewinner.</p></li>
+      <li class="rv"><h3>Feedback</h3><p>Wir werten die Challenge in einem Folgetermin gemeinsam aus und besprechen Ihr Feedback.</p></li>
     </ol>
   </div>
 </section>
 <section class="section" aria-labelledby="kosten">
   <div class="wrap">
-    <h2 id="kosten" class="section-title">Zwei Posten, klar getrennt</h2>
-    <div class="panels">
-      <div class="panel"><span class="kicker">Posten 1</span><h3>Servicegebühr</h3><p>Geht an meedup. Sie deckt Vorbereitung, Ausschreibung, Begleitung und Auswertung der Challenge.</p></div>
-      <div class="panel"><span class="kicker">Posten 2</span><h3>Preisgeld</h3><p>Geht vollständig an die Studierenden mit den besten Lösungen. Die Höhe legen Sie fest.</p></div>
+    <div class="section-head"><h2 id="kosten">Zwei Posten, klar getrennt</h2><p>Damit klar ist, wohin Ihr Geld fließt.</p></div>
+    <div class="bento two">
+      <div class="cell tint rv"><span class="pill">Posten 1</span><h3>Servicegebühr</h3><p>Geht an meedup. Sie deckt Vorbereitung, Vermarktung, Betreuung und Auswertung der Challenge.</p></div>
+      <div class="cell fern rv"><svg class="star" data-speed="0.12" style="--s:220px;--o:.12;right:-60px;bottom:-70px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg><span class="pill">Posten 2</span><h3>Preisgeld</h3><p>Geht vollständig an die Studierenden mit den besten Lösungen. Die Höhe legen Sie fest.</p></div>
     </div>
   </div>
 </section>
-<section class="statement">
+<section class="section">
   <div class="wrap">
-    <p class="big">Erzählen Sie uns von Ihrer <span class="chip bg-terracotta" aria-hidden="true"></span> Aufgabe. Wir melden uns.</p>
-    <div class="actions" style="justify-content:center"><a class="btn" href="/kontakt/">Kontakt aufnehmen</a></div>
+    <div class="band rv">
+      <svg class="star" data-speed="0.2" style="--s:360px;--o:.1;left:-110px;top:-120px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <svg class="star" data-speed="-0.14" style="--s:260px;--o:.08;right:-70px;bottom:-110px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
+      <h2>Lassen Sie uns über Ihre Aufgabe sprechen</h2>
+      <p>Erzählen Sie uns, wen Sie suchen. Wir melden uns persönlich bei Ihnen.</p>
+      <div class="actions"><a class="btn" href="/kontakt/">Kontakt aufnehmen</a></div>
+    </div>
   </div>
 </section>
 </main>
 <footer class="site-footer">
+  <svg class="star" data-speed="0.12" style="--s:420px;--o:.07;right:-120px;top:-140px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
   <div class="wrap">
-    <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118" loading="lazy"></a>
+    <div>
+      <a class="logo" href="/" aria-label="meedup Startseite"><svg class="mark" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg><img src="/assets/logo.png" alt="" width="480" height="118" loading="lazy"></a>
+      <p class="tagline">talent meets future</p>
+    </div>
     <nav aria-label="Fußnavigation"><ul>
       <li><a href="/studierende/">Für Studierende</a></li>
       <li><a href="/impressum/">Impressum</a></li>

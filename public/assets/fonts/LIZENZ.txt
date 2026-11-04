@@ -1,2 +1,2 @@
-Switzer von Indian Type Foundry, bezogen über Fontshare (https://www.fontshare.com/fonts/switzer).
-Lizenz: ITF Free Font License (FFL), kostenlos für private und kommerzielle Nutzung.
+Archivo (Omnibus-Type) und Roboto (Google), beide unter SIL Open Font License 1.1, siehe OFL.txt.
+Bezogen über Fontsource (npm).
