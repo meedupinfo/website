@@ -4,13 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>meedup</title>
-<meta name="description" content="meedup verbindet Studierende mit echten Aufgaben aus Unternehmen. Kostenlose Tools für Studierende und Challenges im Hackathon-Format.">
+<meta name="description" content="meedup bringt Studierende und Unternehmen an echten Aufgaben zusammen. Kostenlose Tools für Studierende, Challenges für Unternehmen.">
 <link rel="canonical" href="https://meedup.de/">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0f1922" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f1ece4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1814" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/outfit.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/switzer-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/switzer-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/meedup.css">
+<script>
+// Bewegung nur ohne "Bewegung reduzieren". Fällt sie aus, bleibt die Seite nach kurzer Zeit trotzdem sichtbar.
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  document.documentElement.classList.add("motion");
+  setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
+}
+</script>
+<script src="/assets/vendor/lenis.min.js" defer></script>
+<script src="/assets/meedup.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>
@@ -23,47 +33,70 @@
 <main id="inhalt">
 <section class="hero">
   <div class="wrap">
-    <h1>Echte Aufgaben.<br>Echte Talente.</h1>
-    <p class="lead">meedup verbindet Studierende mit echten Aufgaben aus Unternehmen. Mit kostenlosen Tools, einer Community und Challenges im Hackathon-Format.</p>
+    <h1>Wir bringen Studierende und Unternehmen an echten Aufgaben zusammen</h1>
+    <p class="sub">Kostenlose Tools für Studierende. Challenges für Unternehmen. Entstanden an der HAWK.</p>
     <div class="actions">
-      <a class="btn btn-primary" href="/studierende/">Für Studierende</a>
-      <a class="btn btn-secondary" href="/unternehmen/">Für Unternehmen</a>
+      <a class="btn" href="/studierende/">Ich studiere</a>
+      <a class="btn btn-light" href="/unternehmen/">Wir sind ein Unternehmen</a>
     </div>
   </div>
 </section>
-<section class="section alt" aria-labelledby="tools">
-  <div class="wrap">
-    <span class="eyebrow">Kostenlos für Studierende</span>
-    <h2 id="tools">Tools, die dir den Alltag leichter machen.</h2>
-    <p class="lead">Bewerben, jobben, vernetzen. Für alles gibt es ein Werkzeug von uns, ohne Anmeldung bei Dritten und ohne Tracking.</p>
-    
-<div class="grid">
-  <a class="card" href="https://zapply.bewerbungs-tracker.workers.dev" rel="noopener">
-    <span class="badge live">Jetzt nutzen</span>
-    <h3>zapply! by meedup</h3>
-    <p>Behalte deine Bewerbungen im Blick. Kostenlos für bis zu zehn Bewerbungen. Status per Klick weiterschalten und den ganzen Verlauf als Diagramm sehen.</p>
-    <span class="more" aria-hidden="true">zapply öffnen ›</span>
-  </a>
-  <div class="card">
-    <span class="badge">Ab Januar 2027</span>
-    <h3>Nebenjobrechner</h3>
-    <p>Rechne aus, was von deinem Nebenjob übrig bleibt und wo die Grenzen für Minijob und Werkstudentenjob liegen.</p>
-  </div>
-  <div class="card">
-    <span class="badge">Ab Januar 2027</span>
-    <h3>Netzwerk-Tracker</h3>
-    <p>Halte fest, wen du wo kennengelernt hast, und bleib mit deinen Kontakten in Verbindung.</p>
-  </div>
-</div>
+<section aria-labelledby="tc">
+  <h2 id="tc" class="sr-only">Tools und Challenges</h2>
+  <div class="wrap tiles">
+    <a class="tile tile-shot bg-lavender" href="https://zapply.bewerbungs-tracker.workers.dev" rel="noopener">
+      <img src="/assets/zapply.jpg" alt="Ansicht von zapply mit einer Liste von Bewerbungen" width="595" height="640" loading="lazy">
+      <div class="label"><div><span class="tag live">Jetzt nutzen</span><h3>zapply! by meedup</h3><p>Deine Bewerbungen im Blick. Kostenlos für bis zu zehn Bewerbungen.</p></div><span class="arrow" aria-hidden="true">→</span></div>
+    </a>
+    <div class="tile bg-mustard">
+      <span class="tag">Ab Januar 2027</span>
+      <div><h3>Nebenjobrechner</h3><p>Was bleibt vom Nebenjob übrig, und wo liegt die Grenze zum Minijob?</p></div>
+    </div>
+    <div class="tile empty" aria-hidden="true"></div>
+    <div class="tile empty" aria-hidden="true"></div>
+    <div class="tile bg-olive">
+      <span class="tag">Ab Januar 2027</span>
+      <div><h3>Netzwerk-Tracker</h3><p>Wen hast du wo kennengelernt? Hier steht es, wenn du es brauchst.</p></div>
+    </div>
+    <a class="tile bg-terracotta" href="/studierende/#challenges">
+      <span class="tag">Bald</span>
+      <div><h3>Challenges im Hackathon-Format</h3><p>Echte Aufgaben aus Unternehmen, mit Preisgeld für die besten Lösungen.</p></div>
+    </a>
   </div>
 </section>
-<section class="section" aria-labelledby="wie">
+<section class="statement">
   <div class="wrap">
-    <h2 id="wie">So funktioniert meedup.</h2>
-    <div class="grid">
-      <div class="card"><h3>Tools</h3><p>Kostenlose Werkzeuge helfen Studierenden im Alltag und bringen sie zusammen.</p></div>
-      <div class="card"><h3>Community</h3><p>Aus den Nutzerinnen und Nutzern wächst eine Gemeinschaft engagierter Studierender.</p></div>
-      <div class="card"><h3>Challenges</h3><p>Unternehmen stellen echte Aufgaben im Hackathon-Format. Die besten Lösungen werden belohnt.</p></div>
+    <p class="big">Wir bauen kostenlose Tools <span class="chip bg-lavender" aria-hidden="true"></span> für Studierende, aus denen eine Community <span class="chip bg-mustard" aria-hidden="true"></span> wächst. Unternehmen stellen ihr echte <span class="chip bg-olive" aria-hidden="true"></span> Aufgaben.</p>
+  </div>
+</section>
+<section class="section" aria-labelledby="angebot">
+  <div class="wrap">
+    <h2 id="angebot" class="section-title">Was wir machen</h2>
+    <div class="rows">
+      <h3>Für Studierende</h3>
+      <ul>
+        <li><a href="https://zapply.bewerbungs-tracker.workers.dev" rel="noopener">zapply! by meedup <small>Jetzt nutzen →</small></a></li>
+        <li><span>Nebenjobrechner <small>Ab Januar 2027</small></span></li>
+        <li><span>Netzwerk-Tracker <small>Ab Januar 2027</small></span></li>
+        <li><a href="/studierende/#challenges">Challenges im Hackathon-Format <small>Bald →</small></a></li>
+      </ul>
+      <h3>Für Unternehmen</h3>
+      <ul>
+        <li><a href="/unternehmen/">Mehr Sichtbarkeit für bestimmte Stellen <small>→</small></a></li>
+        <li><a href="/unternehmen/">Challenges für Lead-Positionen <small>→</small></a></li>
+        <li><a href="/kontakt/">Gespräch vereinbaren <small>→</small></a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+<section class="section" aria-labelledby="fragen">
+  <div class="wrap">
+    <h2 id="fragen" class="section-title">Häufige Fragen</h2>
+    <div class="faq">
+      <details><summary>Was kostet meedup für Studierende?</summary><div><p>Nichts. Unsere Tools kannst du kostenlos nutzen, ohne Tracking und ohne Werbung.</p></div></details>
+      <details><summary>Was kostet eine Challenge für Unternehmen?</summary><div><p>Eine Challenge besteht aus zwei getrennten Posten. Die Servicegebühr geht an meedup und deckt Vorbereitung, Ausschreibung und Begleitung. Das Preisgeld geht vollständig an die Studierenden mit den besten Lösungen. Beides besprechen wir mit Ihnen im Erstgespräch.</p></div></details>
+      <details><summary>Wann starten die ersten Challenges?</summary><div><p>Wir führen Challenges Schritt für Schritt ein. Wer zuerst davon erfahren will, folgt uns auf <a href="https://www.linkedin.com/company/meedup" rel="noopener">LinkedIn</a>.</p></div></details>
+      <details><summary>Wer steckt hinter meedup?</summary><div><p>Schedi Samet und Lukas Jannik Achenbach. meedup ist an der HAWK entstanden und heute eine GbR mit Sitz in Bingen am Rhein. Mehr auf <a href="/ueber-uns/">Über uns</a>.</p></div></details>
     </div>
   </div>
 </section>
@@ -73,12 +106,12 @@
     <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118" loading="lazy"></a>
     <nav aria-label="Fußnavigation"><ul>
       <li><a href="/studierende/">Für Studierende</a></li>
-      <li><a href="/unternehmen/">Für Unternehmen</a></li>
-      <li><a href="/ueber-uns/">Über uns</a></li>
-      <li><a href="/kontakt/">Kontakt</a></li>
-      <li><a href="https://www.linkedin.com/company/meedup" rel="noopener">LinkedIn</a></li>
       <li><a href="/impressum/">Impressum</a></li>
+      <li><a href="/unternehmen/">Für Unternehmen</a></li>
       <li><a href="/datenschutz/">Datenschutz</a></li>
+      <li><a href="/ueber-uns/">Über uns</a></li>
+      <li><a href="https://www.linkedin.com/company/meedup" rel="noopener">LinkedIn</a></li>
+      <li><a href="/kontakt/">Kontakt</a></li>
     </ul></nav>
     <small>© 2026 meedup GbR</small>
   </div>

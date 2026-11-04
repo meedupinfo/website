@@ -6,11 +6,21 @@
 <title>Datenschutz · meedup</title>
 <meta name="description" content="Datenschutzerklärung der meedup GbR.">
 <link rel="canonical" href="https://meedup.de/datenschutz/">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0f1922" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f1ece4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1814" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/assets/fonts/outfit.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/switzer-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/switzer-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/meedup.css">
+<script>
+// Bewegung nur ohne "Bewegung reduzieren". Fällt sie aus, bleibt die Seite nach kurzer Zeit trotzdem sichtbar.
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  document.documentElement.classList.add("motion");
+  setTimeout(function () { if (!window.meedupMotion) document.documentElement.classList.remove("motion"); }, 2500);
+}
+</script>
+<script src="/assets/vendor/lenis.min.js" defer></script>
+<script src="/assets/meedup.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#inhalt">Zum Inhalt springen</a>
@@ -21,8 +31,7 @@
   </div>
 </header>
 <main id="inhalt">
-<section class="section"><div class="wrap narrow legal">
-  <h1>Datenschutzerklärung</h1>
+<section class="section"><div class="wrap"><div class="legal"><h1>Datenschutzerklärung</h1>
   <p class="hint">meedup, Lukas Jannik Achenbach &amp; Schedi Samet GbR</p>
   <p class="hint">Stand: November 2026</p>
 
@@ -99,19 +108,19 @@
 
   <h2>10. Aktualität und Änderungen dieser Datenschutzerklärung</h2>
   <p>Diese Datenschutzerklärung ist aktuell gültig und hat den Stand November 2026. Durch die Weiterentwicklung unserer Website oder aufgrund geänderter gesetzlicher Vorgaben kann es notwendig werden, diese Erklärung anzupassen. Die jeweils aktuelle Version ist jederzeit auf unserer Website abrufbar.</p>
-</div></section>
+</div></div></section>
 </main>
 <footer class="site-footer">
   <div class="wrap">
     <a class="logo" href="/" aria-label="meedup Startseite"><img src="/assets/logo.png" alt="meedup" width="480" height="118" loading="lazy"></a>
     <nav aria-label="Fußnavigation"><ul>
       <li><a href="/studierende/">Für Studierende</a></li>
-      <li><a href="/unternehmen/">Für Unternehmen</a></li>
-      <li><a href="/ueber-uns/">Über uns</a></li>
-      <li><a href="/kontakt/">Kontakt</a></li>
-      <li><a href="https://www.linkedin.com/company/meedup" rel="noopener">LinkedIn</a></li>
       <li><a href="/impressum/">Impressum</a></li>
+      <li><a href="/unternehmen/">Für Unternehmen</a></li>
       <li><a href="/datenschutz/">Datenschutz</a></li>
+      <li><a href="/ueber-uns/">Über uns</a></li>
+      <li><a href="https://www.linkedin.com/company/meedup" rel="noopener">LinkedIn</a></li>
+      <li><a href="/kontakt/">Kontakt</a></li>
     </ul></nav>
     <small>© 2026 meedup GbR</small>
   </div>
