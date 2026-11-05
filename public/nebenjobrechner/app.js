@@ -1,10 +1,9 @@
 // UI: stellt die Fragen erst einzeln (Onboarding mit Zurück), danach alle Fragen plus Ergebnis live.
 // Rechnet mit rechner.js. Speichert nichts.
-import { berechne } from "./rechner.js";
-import w2026 from "./werte/2026.js";
-import w2027 from "./werte/2027.js";
-
-const JAHRE = { 2026: w2026, 2027: w2027 };
+import { berechne, vergleiche } from "./rechner.js";
+// Werte je Jahr erst laden, wenn das Jahr gebraucht wird (spart Ladezeit beim ersten Aufruf)
+const JAHRE = { 2026: null, 2027: null };
+const holen = async (j) => (JAHRE[j] ||= (await import(`./werte/${j}.js`)).default);
 const $ = (id) => document.getElementById(id);
 const form = $("eingaben");
 const eur = (x) => x.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
@@ -21,7 +20,116 @@ const JOBINFO = (W) => ({
 // Jahr: aktuelles Jahr, sonst das neueste vorhandene
 const jahre = Object.keys(JAHRE);
 const aktuell = String(new Date().getFullYear());
-$("jahr").innerHTML = jahre.map((j) => `<option ${j === (JAHRE[aktuell] ? aktuell : jahre.at(-1)) ? "selected" : ""}>${j}</option>`).join("");
+const start = aktuell in JAHRE ? aktuell : jahre.at(-1);
+$("jahr-wahl").innerHTML = jahre.map((j) => `<input type="radio" id="jahr-${j}" name="jahr" value="${j}"${j === start ? " checked" : ""}><label for="jahr-${j}">${j}</label>`).join("");
+const jahr = () => new FormData(form).get("jahr");
+await holen(start);
+
+// Regler: jedes Zahlenfeld mit data-slider bekommt einen Schieberegler, beide bleiben synchron.
+// Das Zahlenfeld zeigt den Wert groß und erlaubt exakte Eingaben. Grenzen stehen als Striche auf
+// der Spur und als Chips in fester Reihenfolge darunter. Ein Chip setzt den Regler auf die Grenze.
+const regler = [...form.querySelectorAll("[data-slider]")].map((zahl) => {
+  const [min, max, step] = zahl.dataset.slider.split(",");
+  const label = form.querySelector(`label[for="${zahl.id}"]`);
+  label.id = label.id || `${zahl.id}-label`;
+  const kopf = document.createElement("div");
+  kopf.className = "regler-kopf";
+  const wert = document.createElement("span");
+  wert.className = "regler-wert";
+  label.before(kopf);
+  kopf.append(label, wert);
+  const einheit = document.createElement("span");
+  einheit.className = "einheit";
+  einheit.textContent = zahl.dataset.einheit.replace("Euro", "€").replace("Stunden", "Std.");
+  einheit.setAttribute("aria-hidden", "true");
+  wert.append(zahl, einheit);
+  const huelle = document.createElement("div");
+  huelle.className = "spur-wrap";
+  const spur = Object.assign(document.createElement("input"), { type: "range", min, max, step, className: "spur" });
+  spur.setAttribute("aria-labelledby", label.id);
+  const ticks = document.createElement("div");
+  ticks.className = "ticks";
+  ticks.setAttribute("aria-hidden", "true");
+  huelle.append(spur, ticks);
+  const naechste = Object.assign(document.createElement("p"), { className: "naechste" });
+  const chips = document.createElement("div");
+  chips.className = "chips";
+  chips.setAttribute("role", "group");
+  chips.setAttribute("aria-label", `Grenzen für ${label.textContent}`);
+  kopf.after(huelle, naechste, chips);
+  spur.addEventListener("input", () => { zahl.value = spur.value; });
+  chips.addEventListener("click", (ev) => {
+    const chip = ev.target.closest(".chip");
+    if (!chip) return;
+    zahl.value = chip.dataset.wert;
+    zahl.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  return { zahl, spur, ticks, naechste, chips, min: +min, max: +max, sig: "" };
+});
+
+// Wert mit Einheit lesbar machen, zum Beispiel 603 €, 20 Std., 25 Jahre
+function fmt(v, einheit) {
+  const zahl = v.toLocaleString("de-DE", { minimumFractionDigits: Number.isInteger(v) ? 0 : 2, maximumFractionDigits: 2 });
+  if (einheit.startsWith("Euro")) return `${zahl} €`;
+  if (einheit.startsWith("Stunden")) return `${zahl} Std.`;
+  return `${zahl} ${v === 1 ? einheit.replace(/e$/, "").replace(/n$/, "") : einheit}`;
+}
+
+// Grenzen je Regler, Farben wie die Ampel. Alle Werte aus werte/<jahr>.js.
+// name steht auf dem Chip, bis ergänzt den Satz "noch X bis ...".
+const FARBE = { gruen: "var(--meedup-fern)", gelb: "#f0c75e", rot: "#b3402e", neutral: "#7d8b99" };
+function grenzen(id, e, W, r) {
+  const w = (k) => W[k].wert;
+  const ampel = (g) => [[g * w("ampelGelbAb"), "gruen"], [g, "gelb"], [Infinity, "rot"]];
+  const G = w("minijobGrenze"), OG = w("uebergangsbereichBis"), std = w("werkstudentStunden");
+  const zweit = e.kindergeld && !e.erstausbildung;
+  const minijob = { wert: G, name: "Minijob-Grenze", bis: "zur Minijob-Grenze", farbe: "rot" };
+  const ueb = { wert: OG, name: "Übergangsbereich bis", bis: "zum Ende des Übergangsbereichs", farbe: "rot" };
+  const bafoeg = r.bafoeg && r.bafoeg.grenze ? [{ wert: r.bafoeg.grenze, name: "BAföG ohne Kürzung bis", bis: "zur BAföG-Kürzung", farbe: "rot" }] : [];
+  if (id === "brutto" && e.jobart === "minijob") return { marken: [minijob, ...bafoeg], zonen: ampel(G) };
+  if (id === "brutto" && e.jobart === "midijob") return { marken: [minijob, ueb, ...bafoeg], zonen: [[G, "neutral"], ...ampel(OG)] };
+  if (id === "brutto") return { marken: [...(e.jobart === "werkstudent" ? [minijob, ueb] : []), ...bafoeg], zonen: [] };
+  if (id === "stundenlohn") return { marken: [{ wert: w("mindestlohn"), name: "Mindestlohn", bis: "zum Mindestlohn", farbe: "gruen" }], zonen: [[w("mindestlohn") - 0.001, "rot"], [Infinity, "neutral"]] };
+  const stunden = { wert: std, name: e.jobart === "werkstudent" ? "Werkstudent höchstens" : "Kindergeld höchstens", bis: `zur ${std}-Stunden-Grenze`, farbe: "rot" };
+  if (id === "stdVorlesung" && (e.jobart === "werkstudent" || zweit)) return { marken: [stunden], zonen: ampel(std) };
+  if (id === "stdFerien" && (e.jobart === "werkstudent" || zweit)) return { marken: [{ ...stunden, farbe: "gelb", name: "Mehr erlaubt, Vorlesungszeit höchstens" }], zonen: [] };
+  if (id === "alter") return { marken: [
+    { wert: w("famVersAlter"), name: "Ende Familienversicherung mit", bis: "zum Ende der Familienversicherung", farbe: "neutral" },
+    { wert: w("kvdsBisAlter"), name: "Ende Studententarif mit", bis: "zum Ende des Studententarifs", farbe: "neutral" }], zonen: [] };
+  if (id === "monate") return { marken: [{ wert: w("kurzfristigMonate"), name: "Kurzfristig höchstens", bis: "zur Grenze für kurzfristige Jobs", farbe: "rot" }], zonen: [[w("kurzfristigMonate"), "gruen"], [Infinity, "rot"]] };
+  if (id === "stipBetrag" && e.bafoeg) return { marken: [{ wert: w("bafoegStipendiumFrei"), name: "BAföG-frei bis", bis: "zur Anrechnung aufs BAföG", farbe: "gelb" }], zonen: [] };
+  return { marken: [], zonen: [] };
+}
+
+function regler_zeigen(e, W, r) {
+  for (const g of regler) {
+    const v = parseFloat(g.zahl.value) || 0;
+    const einheit = g.zahl.dataset.einheit;
+    g.spur.value = v;
+    const pos = (x) => Math.max(0, Math.min(1, (x - g.min) / (g.max - g.min)));
+    const { marken, zonen } = grenzen(g.zahl.id, e, W, r);
+    let von = 0;
+    const teile = zonen.map(([bis, farbe]) => { const b = pos(bis) * 100; const t = `${FARBE[farbe]} ${von}% ${b}%`; von = b; return t; });
+    g.spur.style.setProperty("--spur", teile.length ? `linear-gradient(to right, ${teile.join(", ")})` : FARBE.neutral);
+    // Chips nur neu bauen, wenn sich die Grenzen ändern, damit der Fokus auf dem Chip bleibt
+    const sig = JSON.stringify(marken);
+    if (sig !== g.sig) {
+      g.sig = sig;
+      g.ticks.innerHTML = marken.filter((m) => m.wert >= g.min && m.wert <= g.max)
+        .map((m) => `<span style="--p:${pos(m.wert)};background:${FARBE[m.farbe]}"></span>`).join("");
+      g.chips.innerHTML = marken.map((m) => `<button type="button" class="chip" data-wert="${m.wert}" style="--c:${FARBE[m.farbe]}">${m.name} ${fmt(m.wert, einheit)}</button>`).join("");
+      g.chips.hidden = !marken.length;
+    }
+    // nächste Grenze in Worten, auch für Screenreader im Wert des Reglers
+    const naechste = marken.slice().sort((x, y) => Math.abs(x.wert - v) - Math.abs(y.wert - v))[0];
+    const d = naechste ? Math.round((naechste.wert - v) * 100) / 100 : 0;
+    const satz = !naechste ? "" : d === 0 ? `Genau auf der Grenze: ${naechste.name} ${fmt(naechste.wert, einheit)}` :
+      d > 0 ? `Noch ${fmt(d, einheit)} bis ${naechste.bis}` : `${fmt(-d, einheit)} über ${naechste.bis.replace(/^zu[mr] /, (x) => (x === "zur " ? "der " : "dem "))}`;
+    g.naechste.textContent = satz;
+    g.naechste.hidden = !naechste;
+    g.spur.setAttribute("aria-valuetext", `${fmt(v, einheit)}${einheit.includes("im Monat") ? " im Monat" : ""}${satz ? ". " + satz : ""}`);
+  }
+}
 
 function kassenAuswahl(W) {
   const sel = $("kasse");
@@ -30,8 +138,16 @@ function kassenAuswahl(W) {
     W.krankenkassen.wert.map((k) => `<option${k.name === vorher ? " selected" : ""}>${k.name}</option>`).join("");
 }
 
-function lesen(W) {
-  const f = new FormData(form);
+// Szenarien: Jobangaben gibt es je Szenario, alles andere gilt für beide
+const JOB = ["jobart", "modus", "brutto", "stundenlohn", "stdVorlesung", "stdFerien", "ferienWochen", "monate", "rvBefreit"];
+const szenarien = { A: null, B: null };
+let aktiv = "A";
+const sichern = () => Object.fromEntries(JOB.map((k) => [k, form.elements[k].value]));
+const laden = (s) => JOB.forEach((k) => { form.elements[k].value = s[k]; });
+
+function lesen(W, job) {
+  const fd = new FormData(form);
+  const f = { get: (k) => (job && JOB.includes(k) ? job[k] : fd.get(k)) };
   const zahl = (k) => Math.max(0, parseFloat(String(f.get(k) || "0").replace(",", ".")) || 0);
   const alter = Math.round(zahl("alter"));
   return {
@@ -39,7 +155,7 @@ function lesen(W) {
     brutto: zahl("brutto"), stundenlohn: zahl("stundenlohn"),
     stdVorlesung: zahl("stdVorlesung"), stdFerien: zahl("stdFerien"),
     ferienWochen: Math.min(52, zahl("ferienWochen")), monate: Math.max(1, Math.min(12, Math.round(zahl("monate")) || 1)),
-    alter, rvBefreit: f.get("rvBefreit") === "on", kinder: f.get("kinder") === "on", kasse: f.get("kasse") || "",
+    alter, rvBefreit: f.get("rvBefreit") === "ja", kinder: f.get("kinder") === "ja", kasse: f.get("kasse") || "",
     // über den Altersgrenzen entfallen Kindergeld und Familienversicherung automatisch
     kv: alter >= W.famVersAlter.wert ? "selbst" : f.get("kv"),
     kindergeld: alter < W.kindergeldAlter.wert && f.get("kindergeld") === "ja", erstausbildung: f.get("erstausbildung") === "ja",
@@ -63,7 +179,9 @@ function sichtbarkeit(e, W) {
   form.querySelectorAll("[data-modus]").forEach((el) => (el.hidden = el.dataset.modus !== e.modus));
   form.querySelectorAll("[data-nicht]").forEach((el) => (el.hidden = el.dataset.nicht === e.jobart));
   $("brutto-label").textContent = kurz ? "Brutto pro Arbeitsmonat in Euro" : "Brutto pro Monat in Euro";
-  $("jobart-hinweis").textContent = JOBINFO(W)[e.jobart];
+  for (const [art, text] of Object.entries(JOBINFO(W))) $(`info-${art}`).textContent = text;
+  $("info-deutschland").textContent = `${eur(W.deutschlandstipendium.wert)} im Monat, unabhängig vom Einkommen`;
+  $("kinder-hinweis").textContent = `Ohne Kinder zahlst du ab ${W.pvKinderlosZuschlagAb.wert} einen kleinen Zuschlag zur Pflegeversicherung.`;
   $("famalt-hinweis").textContent = `Ab ${W.famVersAlter.wert} kannst du nicht mehr über deine Eltern familienversichert sein. Wir rechnen deshalb mit eigener Versicherung.`;
   $("mindestlohn-hinweis").textContent = `Mindestlohn ${W.jahr}: ${eur(W.mindestlohn.wert)} pro Stunde.` +
     (e.modus === "stunde" && e.stundenlohn > 0 && e.stundenlohn < W.mindestlohn.wert ? " Dein Stundenlohn liegt darunter." : "");
@@ -73,14 +191,25 @@ const li = (a, b, cls = "") => `<li class="${cls}"><span>${a}</span><span>${b}</
 const punkt = (p) => `<li><span class="pill ampel-${p.status}">${{ gruen: "passt", gelb: "knapp", rot: "überschritten" }[p.status]}</span><div><strong>${p.titel}</strong><p>${p.text} <a href="${p.quelle}" rel="noopener">Quelle</a></p></div></li>`;
 
 function zeigen() {
-  const W = JAHRE[$("jahr").value];
+  const W = JAHRE[jahr()];
+  if (!W) return; // Werte des Jahres laden noch, zeigen() läuft danach erneut
   if ($("kasse").options.length !== W.krankenkassen.wert.length + 1) kassenAuswahl(W);
+  if (szenarien.B) szenarien[aktiv] = sichern();
   const e = lesen(W);
+  const andere = szenarien.B ? lesen(W, szenarien[aktiv === "A" ? "B" : "A"]) : null;
   // leeres Feld heißt: Standard-Studienkostenpauschale des Jahres
   $("studienkosten").placeholder = String(W.studienkostenpauschale.wert);
-  if ($("studienkosten").value === "") e.studienkosten = W.studienkostenpauschale.wert;
+  if ($("studienkosten").value === "") for (const x of [e, andere]) if (x) x.studienkosten = W.studienkostenpauschale.wert;
   sichtbarkeit(e, W);
-  const r = berechne(e, W);
+  let r = null;
+  if (andere) {
+    const v = aktiv === "A" ? vergleiche(e, andere, W) : vergleiche(andere, e, W);
+    r = aktiv === "A" ? v.a : v.b;
+    vergleich_zeigen(v);
+  } else r = berechne(e, W);
+  $("vergleich-panel").hidden = !andere;
+  $("titel-gesamt").textContent = "Das bleibt dir im Monat" + (andere ? ` in Szenario ${aktiv}` : "");
+  regler_zeigen(e, W, r);
   const kurz = e.jobart === "kurzfristig";
 
   $("gesamt").textContent = eur(r.gesamt);
@@ -146,6 +275,50 @@ function zeigen() {
   schritte();
 }
 
+// Vergleichskarte: Aussage, beide Rechnungen nebeneinander, Grenzen je Szenario
+const KURZ = { minijob: "Minijob", midijob: "Midijob", werkstudent: "Werkstudent", kurzfristig: "Kurzfristig" };
+function vergleich_zeigen(v) {
+  const d = v.differenz;
+  $("vergleich-aussage").textContent = d > 0 ? `Szenario B bringt dir ${eur(d)} mehr im Monat.`
+    : d < 0 ? `Szenario A bringt dir ${eur(-d)} mehr im Monat.` : "Beide Szenarien bringen dir gleich viel.";
+  const texte = [...new Set([...v.a.zeilen, ...v.b.zeilen].map((z) => z.text))];
+  const wert = (r, t) => (r.zeilen.find((z) => z.text === t) || { betrag: 0 }).betrag;
+  const knapp = (r) => r.ampeln.filter((p) => p.status !== "gruen")
+    .map((p) => `<span class="pill ampel-${p.status}">${p.titel} ${p.status === "rot" ? "überschritten" : "knapp"}</span>`).join(" ") || "alles im grünen Bereich";
+  const geld = (x) => (x < 0 ? "− " + eur(-x) : eur(Math.abs(x)));
+  const sieger = (s) => (d === 0 ? "" : (d > 0) === (s === "B") ? " gewinner" : "");
+  $("vergleich-tabelle").innerHTML =
+    `<tr><td>Job</td><td>${KURZ[v.a.art]}</td><td>${KURZ[v.b.art]}</td></tr>` +
+    texte.map((t) => `<tr><td>${t}</td><td>${geld(wert(v.a, t))}</td><td>${geld(wert(v.b, t))}</td></tr>`).join("") +
+    `<tr class="ende besser"><td>Das bleibt dir im Monat</td><td class="${sieger("A")}">${eur(v.a.gesamt)}</td><td class="${sieger("B")}">${eur(v.b.gesamt)}</td></tr>`;
+  $("vergleich-grenzen").innerHTML = `<p><strong>Grenzen in A:</strong> ${knapp(v.a)}</p><p><strong>Grenzen in B:</strong> ${knapp(v.b)}</p>`;
+  $("vergleich-hinweis").textContent = `Die Karten darunter zeigen Szenario ${aktiv}. Umschalten kannst du oben im Formular bei „Du bearbeitest gerade“.`;
+}
+
+function szenario_wechseln(neu) {
+  if (neu === aktiv) return;
+  szenarien[aktiv] = sichern();
+  aktiv = neu;
+  laden(szenarien[neu]);
+  form.elements.szenario.value = neu;
+}
+$("szenario-wahl").addEventListener("change", (ev) => { ev.stopPropagation(); szenario_wechseln(ev.target.value); zeigen(); });
+$("vergleich-start").addEventListener("click", () => {
+  szenarien.A = sichern();
+  szenarien.B = { ...szenarien.A };
+  szenario_wechseln("B");
+  zeigen();
+  const ziel = form.querySelector("[data-job]");
+  ziel.scrollIntoView({ block: "start" });
+  ziel.querySelector(".frage").focus({ preventScroll: true });
+});
+$("vergleich-ende").addEventListener("click", () => {
+  szenario_wechseln("A");
+  szenarien.A = szenarien.B = null;
+  zeigen();
+  $("gesamt").focus();
+});
+
 // Onboarding: eine Frage nach der anderen, Schritte ohne sichtbare Fragen werden übersprungen
 let onboarding = true;
 let schritt = 0;
@@ -164,6 +337,15 @@ function schritte(fokus = false) {
   $("weiter").hidden = !onboarding;
   $("weiter").textContent = schritt === liste.length - 1 ? "Ergebnis zeigen" : "Weiter";
   $("einzeln").hidden = onboarding;
+  $("vergleich-start").hidden = onboarding || !!szenarien.B;
+  $("vergleich-ende").hidden = !szenarien.B;
+  $("szenario-wahl").hidden = !szenarien.B;
+  form.querySelectorAll("[data-job] .frage").forEach((f) => {
+    let pill = f.querySelector(".pill");
+    if (!pill) { pill = document.createElement("span"); pill.className = "pill"; f.append(pill); }
+    pill.textContent = `Szenario ${aktiv}`;
+    pill.hidden = !szenarien.B;
+  });
   if (fokus) (onboarding ? liste[schritt].querySelector(".frage") : $("gesamt")).focus({ preventScroll: !onboarding });
 }
 
@@ -177,5 +359,5 @@ form.addEventListener("submit", (ev) => {
 $("zurueck").addEventListener("click", () => { schritt = Math.max(0, schritt - 1); schritte(true); });
 $("einzeln").addEventListener("click", () => { onboarding = true; schritt = 0; schritte(true); form.scrollIntoView({ block: "start" }); });
 form.addEventListener("input", zeigen);
-form.addEventListener("change", zeigen);
+form.addEventListener("change", (ev) => (ev.target.name === "jahr" ? holen(jahr()).then(zeigen) : zeigen()));
 zeigen();

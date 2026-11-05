@@ -74,6 +74,51 @@
 .warnungen a { color: #fff; }
 [tabindex="-1"]:focus { outline: none; }
 .ergebnis .cell { scroll-margin-top: 90px; }
+/* Visuelle Eingaben: Karten für Jobart und Stipendium, Regler mit Grenzmarken */
+.karten { display: grid; gap: 10px; grid-template-columns: 1fr; }
+@media (min-width: 560px) { .karten { grid-template-columns: 1fr 1fr; } }
+.karten input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.karten label { margin: 0; display: grid; gap: 4px; min-height: 44px; padding: 14px 16px; border-radius: var(--r); cursor: pointer; background: var(--meedup-bg); box-shadow: inset 0 0 0 1.5px var(--meedup-line); font-weight: 400; transition: box-shadow 0.2s ease, background-color 0.2s ease; }
+.karten label strong { font-weight: 700; font-size: 1.02rem; hyphens: manual; }
+.karten label span { font-size: 0.9rem; color: var(--meedup-muted); line-height: 1.4; }
+.karten label:hover { box-shadow: inset 0 0 0 1.5px var(--meedup-primary); }
+.karten input:checked + label { background: var(--meedup-yale); box-shadow: none; color: #fff; }
+.karten input:checked + label span { color: rgba(255, 255, 255, 0.9); }
+.karten input:focus-visible + label { outline: 3px solid var(--meedup-focus); outline-offset: 2px; }
+.karten.klein label { padding: 12px 14px; }
+.segmented label { min-height: 44px; display: inline-flex; align-items: center; }
+.regler-kopf { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 6px 12px; }
+.regler-kopf label { margin: 0; flex: 1 1 12rem; }
+.regler-wert { display: inline-flex; align-items: baseline; gap: 6px; font-family: var(--meedup-head); font-stretch: 125%; font-weight: 700; font-size: 1.35rem; color: var(--meedup-heading); }
+.rechner .regler-wert input[type="number"] { width: 6.5ch; padding: 6px 8px; text-align: right; font: inherit; }
+.regler-wert .einheit { font-size: 0.95rem; font-weight: 500; font-family: var(--meedup-font); font-stretch: 100%; }
+.spur { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; margin: 4px 0 0; background: transparent; cursor: pointer; }
+.spur::-webkit-slider-runnable-track { height: 10px; border-radius: 99px; background: var(--spur, var(--meedup-tint)); }
+.spur::-moz-range-track { height: 10px; border-radius: 99px; background: var(--spur, var(--meedup-tint)); }
+.spur::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -9px; border-radius: 50%; background: var(--meedup-yale); border: 3px solid #fff; box-shadow: 0 1px 4px rgba(13, 29, 53, 0.35); }
+.spur::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--meedup-yale); border: 3px solid #fff; box-shadow: 0 1px 4px rgba(13, 29, 53, 0.35); }
+.spur:focus-visible { outline: 3px solid var(--meedup-focus); outline-offset: 2px; }
+@media (prefers-color-scheme: dark) { .spur::-webkit-slider-thumb { background: var(--meedup-cream); border-color: var(--meedup-sea); } .spur::-moz-range-thumb { background: var(--meedup-cream); border-color: var(--meedup-sea); } }
+.spur-wrap { position: relative; }
+.ticks { position: absolute; inset: 0; pointer-events: none; }
+.ticks span { position: absolute; top: 50%; width: 4px; height: 20px; margin: -10px 0 0 -2px; border-radius: 2px; box-shadow: 0 0 0 2px var(--meedup-card); left: calc(14px + (100% - 28px) * var(--p)); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.chip { font: inherit; font-size: 0.85rem; font-weight: 500; min-height: 36px; padding: 6px 12px; border-radius: 999px; border: 0; cursor: pointer; color: var(--meedup-text); background: var(--meedup-bg); box-shadow: inset 0 0 0 1.5px var(--meedup-line); display: inline-flex; align-items: center; gap: 8px; }
+.chip:hover { box-shadow: inset 0 0 0 1.5px var(--meedup-primary); }
+.chip::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; }
+.naechste { margin: 0; font-size: 0.9rem; color: var(--meedup-muted); min-height: 1.4em; }
+.szenario-wahl { padding: 14px 16px; border-radius: var(--r); background: var(--meedup-tint); }
+.frage .pill { margin-left: 8px; vertical-align: middle; font-family: var(--meedup-font); font-stretch: 100%; letter-spacing: 0; }
+.vergleich .aussage { font-family: var(--meedup-head); font-stretch: 125%; font-weight: 700; font-size: clamp(1.25rem, 4.5vw, 1.6rem); line-height: 1.2; color: var(--meedup-heading); margin: 0; }
+.vergleich table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.vergleich th, .vergleich td { padding: 7px 4px; border-bottom: 1px solid var(--meedup-line); text-align: left; vertical-align: top; }
+.vergleich td:not(:first-child), .vergleich th:not(:first-child) { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.vergleich tr.ende td { font-weight: 700; border-bottom: 0; }
+.vergleich tr.besser td.gewinner { color: var(--meedup-fern); }
+@media (prefers-color-scheme: dark) { .vergleich tr.besser td.gewinner { color: #9fd3a8; } }
+.vergleich-grenzen p { margin: 0; line-height: 2; }
+.vergleich-grenzen .pill { display: inline-block; line-height: 1.4; margin-right: 4px; }
+.vergleich td:first-child { hyphens: auto; }
 </style>
 <!-- /seite-head -->
 <script>
@@ -112,18 +157,26 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
   <div class="wrap bento two rechner onboarding" id="rechner">
     <form id="eingaben" class="rv" novalidate aria-label="Deine Angaben">
       <p class="fortschritt" id="fortschritt" aria-live="polite"></p>
+      <fieldset class="szenario-wahl" id="szenario-wahl" hidden>
+        <legend>Du bearbeitest gerade</legend>
+        <div class="segmented">
+          <input type="radio" id="sz-a" name="szenario" value="A" checked><label for="sz-a">Szenario A</label>
+          <input type="radio" id="sz-b" name="szenario" value="B"><label for="sz-b">Szenario B</label>
+        </div>
+        <p class="hint">Jobart, Verdienst und Arbeitszeit gelten nur für das gewählte Szenario. Alter, Kinder, Kindergeld, Krankenversicherung, BAföG und Stipendium gelten für beide.</p>
+      </fieldset>
 
       <div class="schritt" data-schritt>
         <h2 class="frage" tabindex="-1">Wie alt bist du?</h2>
         <div class="zwei">
           <div>
             <label for="alter">Dein Alter</label>
-            <input type="number" id="alter" name="alter" min="15" max="70" step="1" value="21" inputmode="numeric">
+            <input type="number" id="alter" data-slider="16,40,1" data-einheit="Jahre" name="alter" min="15" max="70" step="1" value="21" inputmode="numeric">
           </div>
-          <div>
-            <label for="jahr">Für welches Jahr rechnest du?</label>
-            <select id="jahr" name="jahr"></select>
-          </div>
+          <fieldset>
+            <legend>Für welches Jahr rechnest du?</legend>
+            <div class="segmented" id="jahr-wahl"></div>
+          </fieldset>
         </div>
       </div>
 
@@ -145,25 +198,27 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
         </fieldset>
       </div>
 
-      <div class="schritt" data-schritt>
+      <div class="schritt" data-job data-schritt>
         <h2 class="frage" tabindex="-1">Was für einen Job hast du?</h2>
         <fieldset>
           <legend class="sr-only">Jobart</legend>
-          <div class="segmented">
-            <input type="radio" id="job-mini" name="jobart" value="minijob" checked><label for="job-mini">Minijob</label>
-            <input type="radio" id="job-midi" name="jobart" value="midijob"><label for="job-midi">Midijob</label>
-            <input type="radio" id="job-werk" name="jobart" value="werkstudent"><label for="job-werk">Werkstudent</label>
-            <input type="radio" id="job-kurz" name="jobart" value="kurzfristig"><label for="job-kurz">Kurzfristig</label>
+          <div class="karten">
+            <input type="radio" id="job-mini" name="jobart" value="minijob" checked><label for="job-mini"><strong>Minijob</strong><span id="info-minijob"></span></label>
+            <input type="radio" id="job-midi" name="jobart" value="midijob"><label for="job-midi"><strong>Midijob</strong><span id="info-midijob"></span></label>
+            <input type="radio" id="job-werk" name="jobart" value="werkstudent"><label for="job-werk"><strong>Werkstudent</strong><span id="info-werkstudent"></span></label>
+            <input type="radio" id="job-kurz" name="jobart" value="kurzfristig"><label for="job-kurz"><strong>Kurzfristig</strong><span id="info-kurzfristig"></span></label>
           </div>
-          <p class="hint" id="jobart-hinweis"></p>
         </fieldset>
-        <div class="check" data-zeige="minijob">
-          <input type="checkbox" id="rvBefreit" name="rvBefreit">
-          <label for="rvBefreit">Ich habe mich von der Rentenversicherungspflicht befreien lassen</label>
-        </div>
+        <fieldset data-zeige="minijob">
+          <legend>Hast du dich von der Rentenversicherungspflicht befreien lassen?</legend>
+          <div class="segmented">
+            <input type="radio" id="rv-nein" name="rvBefreit" value="nein" checked><label for="rv-nein">Nein</label>
+            <input type="radio" id="rv-ja" name="rvBefreit" value="ja"><label for="rv-ja">Ja</label>
+          </div>
+        </fieldset>
       </div>
 
-      <div class="schritt" data-schritt>
+      <div class="schritt" data-job data-schritt>
         <h2 class="frage" tabindex="-1">Wie viel verdienst du?</h2>
         <fieldset>
           <legend>Verdienst angeben als</legend>
@@ -174,36 +229,36 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
         </fieldset>
         <div data-modus="monat">
           <label for="brutto" id="brutto-label">Brutto pro Monat in Euro</label>
-          <input type="number" id="brutto" name="brutto" min="0" step="1" value="500" inputmode="decimal">
+          <input type="number" id="brutto" data-slider="0,2500,1" data-einheit="Euro im Monat" name="brutto" min="0" step="1" value="500" inputmode="decimal">
           <p class="hint" data-nicht="kurzfristig">Bei schwankendem Lohn nimm den Durchschnitt übers Jahr.</p>
         </div>
         <div data-modus="stunde">
           <label for="stundenlohn">Stundenlohn brutto in Euro</label>
-          <input type="number" id="stundenlohn" name="stundenlohn" min="0" step="0.01" inputmode="decimal">
+          <input type="number" id="stundenlohn" data-slider="0,40,0.1" data-einheit="Euro pro Stunde" name="stundenlohn" min="0" step="0.01" inputmode="decimal">
           <p class="hint" id="mindestlohn-hinweis"></p>
         </div>
       </div>
 
-      <div class="schritt" data-schritt data-zeige="arbeitszeit">
+      <div class="schritt" data-job data-schritt data-zeige="arbeitszeit">
         <h2 class="frage" tabindex="-1">Wie viel arbeitest du?</h2>
         <div class="zwei" data-zeige="stunden">
           <div>
             <label for="stdVorlesung">Wochenstunden in der Vorlesungszeit</label>
-            <input type="number" id="stdVorlesung" name="stdVorlesung" min="0" max="80" step="0.5" value="10" inputmode="decimal">
+            <input type="number" id="stdVorlesung" data-slider="0,40,0.5" data-einheit="Stunden pro Woche" name="stdVorlesung" min="0" max="80" step="0.5" value="10" inputmode="decimal">
           </div>
           <div data-nicht="kurzfristig">
             <label for="stdFerien">Wochenstunden in den Semesterferien</label>
-            <input type="number" id="stdFerien" name="stdFerien" min="0" max="80" step="0.5" value="10" inputmode="decimal">
+            <input type="number" id="stdFerien" data-slider="0,40,0.5" data-einheit="Stunden pro Woche" name="stdFerien" min="0" max="80" step="0.5" value="10" inputmode="decimal">
           </div>
           <div data-nicht="kurzfristig">
             <label for="ferienWochen">Wochen Semesterferien im Jahr</label>
-            <input type="number" id="ferienWochen" name="ferienWochen" min="0" max="52" step="1" value="20" inputmode="numeric">
+            <input type="number" id="ferienWochen" data-slider="0,30,1" data-einheit="Wochen" name="ferienWochen" min="0" max="52" step="1" value="20" inputmode="numeric">
             <p class="hint">Steht im Semesterkalender deiner Hochschule.</p>
           </div>
         </div>
         <div data-zeige="kurzfristig">
           <label for="monate">In wie vielen Monaten im Jahr arbeitest du?</label>
-          <input type="number" id="monate" name="monate" min="1" max="12" step="1" value="2" inputmode="numeric">
+          <input type="number" id="monate" data-slider="1,12,1" data-einheit="Monate" name="monate" min="1" max="12" step="1" value="2" inputmode="numeric">
         </div>
       </div>
 
@@ -222,10 +277,14 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
           <select id="kasse" name="kasse"><option value="">Weiß ich nicht, Durchschnitt nehmen</option></select>
           <p class="hint">Wichtig, wenn du dich selbst versichern musst. Der Beitrag hängt vom Zusatzbeitrag deiner Kasse ab.</p>
         </div>
-        <div class="check" data-zeige="kinderlos">
-          <input type="checkbox" id="kinder" name="kinder">
-          <label for="kinder">Ich habe Kinder</label>
-        </div>
+        <fieldset data-zeige="kinderlos">
+          <legend>Hast du Kinder?</legend>
+          <div class="segmented">
+            <input type="radio" id="kinder-nein" name="kinder" value="nein" checked><label for="kinder-nein">Nein</label>
+            <input type="radio" id="kinder-ja" name="kinder" value="ja"><label for="kinder-ja">Ja</label>
+          </div>
+          <p class="hint" id="kinder-hinweis"></p>
+        </fieldset>
       </div>
 
       <div class="schritt" data-schritt>
@@ -239,35 +298,35 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
         </fieldset>
         <div data-zeige="bafoeg">
           <label for="bafoegBetrag">Dein aktueller BAföG-Betrag pro Monat in Euro</label>
-          <input type="number" id="bafoegBetrag" name="bafoegBetrag" min="0" step="1" value="600" inputmode="decimal">
+          <input type="number" id="bafoegBetrag" data-slider="0,1200,1" data-einheit="Euro im Monat" name="bafoegBetrag" min="0" step="1" value="600" inputmode="decimal">
           <p class="hint">So steht er im Bescheid, bevor dein Nebenjob angerechnet wird.</p>
         </div>
       </div>
 
       <div class="schritt" data-schritt>
         <h2 class="frage" tabindex="-1">Hast du ein Stipendium?</h2>
-        <div>
-          <label for="stipendium">Stipendium</label>
-          <select id="stipendium" name="stipendium">
-            <option value="keins">Keins</option>
-            <option value="deutschland">Deutschlandstipendium</option>
-            <option value="begabt">Begabtenförderungswerk</option>
-            <option value="sonstig">Sonstiges Stipendium</option>
-          </select>
-        </div>
+        <fieldset>
+          <legend class="sr-only">Stipendium</legend>
+          <div class="karten klein">
+            <input type="radio" id="stip-keins" name="stipendium" value="keins" checked><label for="stip-keins"><strong>Keins</strong><span>Kein Stipendium</span></label>
+            <input type="radio" id="stip-de" name="stipendium" value="deutschland"><label for="stip-de"><strong>Deutschland­stipendium</strong><span id="info-deutschland"></span></label>
+            <input type="radio" id="stip-begabt" name="stipendium" value="begabt"><label for="stip-begabt"><strong>Begabten­förderungswerk</strong><span>Grundstipendium und Studienkostenpauschale</span></label>
+            <input type="radio" id="stip-sonst" name="stipendium" value="sonstig"><label for="stip-sonst"><strong>Sonstiges</strong><span>Anderes Stipendium mit eigenem Betrag</span></label>
+          </div>
+        </fieldset>
         <div class="zwei" data-zeige="begabt">
           <div>
             <label for="grundstipendium">Grundstipendium pro Monat in Euro</label>
-            <input type="number" id="grundstipendium" name="grundstipendium" min="0" step="1" value="0" inputmode="decimal">
+            <input type="number" id="grundstipendium" data-slider="0,1200,1" data-einheit="Euro im Monat" name="grundstipendium" min="0" step="1" value="0" inputmode="decimal">
           </div>
           <div>
             <label for="studienkosten">Studienkostenpauschale pro Monat in Euro</label>
-            <input type="number" id="studienkosten" name="studienkosten" min="0" step="1" inputmode="decimal">
+            <input type="number" id="studienkosten" data-slider="0,600,1" data-einheit="Euro im Monat" name="studienkosten" min="0" step="1" inputmode="decimal">
           </div>
         </div>
         <div data-zeige="sonstig">
           <label for="stipBetrag">Stipendium pro Monat in Euro</label>
-          <input type="number" id="stipBetrag" name="stipBetrag" min="0" step="1" value="0" inputmode="decimal">
+          <input type="number" id="stipBetrag" data-slider="0,1500,1" data-einheit="Euro im Monat" name="stipBetrag" min="0" step="1" value="0" inputmode="decimal">
         </div>
       </div>
 
@@ -275,13 +334,22 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
         <button type="button" class="btn btn-ghost" id="zurueck">Zurück</button>
         <button type="submit" class="btn" id="weiter">Weiter</button>
         <button type="button" class="btn btn-ghost" id="einzeln" hidden>Fragen einzeln durchgehen</button>
+        <button type="button" class="btn" id="vergleich-start" hidden>Mit anderem Job vergleichen</button>
+        <button type="button" class="btn btn-ghost" id="vergleich-ende" hidden>Szenario B entfernen</button>
       </div>
     </form>
 
     <div class="ergebnis" id="ergebnis" aria-live="polite">
+      <div class="cell vergleich" id="vergleich-panel" tabindex="-1" hidden>
+        <h2 class="titel">Vergleich der Szenarien</h2>
+        <p class="aussage" id="vergleich-aussage"></p>
+        <div class="tabelle"><table><caption class="sr-only">Rechnung von Szenario A und B pro Monat</caption><thead><tr><th scope="col">Posten</th><th scope="col">A</th><th scope="col">B</th></tr></thead><tbody id="vergleich-tabelle"></tbody></table></div>
+        <div class="vergleich-grenzen" id="vergleich-grenzen"></div>
+        <p class="hint" id="vergleich-hinweis"></p>
+      </div>
       <div class="cell yale rv">
         <svg class="star" data-speed="0.08" style="--s:220px;--o:.12;right:-60px;top:-70px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
-        <h2 class="titel">Das bleibt dir im Monat</h2>
+        <h2 class="titel" id="titel-gesamt">Das bleibt dir im Monat</h2>
         <p class="gross" id="gesamt" tabindex="-1">0 €</p>
         <p id="gesamt-text"></p>
         <h3 class="sr-only">So setzt sich der Betrag zusammen</h3>
