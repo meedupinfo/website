@@ -84,9 +84,16 @@ function zeigen() {
   const kurz = e.jobart === "kurzfristig";
 
   $("gesamt").textContent = eur(r.gesamt);
-  $("gesamt-text").textContent = (kurz ? "Im Schnitt übers Jahr: " : "") + "Nebenjob netto" +
-    (r.bafoeg ? " plus BAföG" : "") + (r.stipendium.betrag ? " plus Stipendium" : "") +
-    (r.kv.beitrag ? " minus deine Krankenversicherung" : "") + ".";
+  // Rechenkette: jede Zeile mit Grund und Sprung zur ausführlichen Erklärung
+  const vz = (x) => (x < 0 ? "− " : x > 0 ? "+ " : "") + eur(Math.abs(x));
+  $("quittung").innerHTML = r.zeilen.map((z, i) => z.summe
+    ? `<li class="zwischen"><span>= ${z.text}</span><span class="betrag">${eur(z.betrag)}</span></li>`
+    : `<li><a href="#${z.ziel}">${z.text}</a><span class="betrag${z.betrag === 0 ? " null" : ""}">${i === 0 ? eur(z.betrag) : vz(z.betrag)}</span><small>${z.grund}</small></li>`).join("") +
+    `<li class="ende"><span>= Das bleibt dir im Monat</span><span class="betrag">${eur(r.gesamt)}</span></li>`;
+  const knapp = r.ampeln.filter((p) => p.status !== "gruen");
+  $("warnungen").hidden = !knapp.length;
+  $("warnungen").innerHTML = knapp.map((p) => `<li><span class="pill ampel-${p.status}">${p.status === "rot" ? "überschritten" : "knapp"}</span><a href="#grenzen">${p.titel}</a></li>`).join("");
+  $("gesamt-text").textContent = (kurz ? "Im Schnitt übers Jahr. " : "") + "So setzt sich der Betrag zusammen. Jede Zeile führt zur ausführlichen Erklärung.";
 
   const sv = r.sv;
   $("posten").innerHTML =
@@ -157,7 +164,7 @@ function schritte(fokus = false) {
   $("weiter").hidden = !onboarding;
   $("weiter").textContent = schritt === liste.length - 1 ? "Ergebnis zeigen" : "Weiter";
   $("einzeln").hidden = onboarding;
-  if (fokus) (onboarding ? liste[schritt].querySelector(".frage") : $("gesamt")).focus();
+  if (fokus) (onboarding ? liste[schritt].querySelector(".frage") : $("gesamt")).focus({ preventScroll: !onboarding });
 }
 
 form.addEventListener("submit", (ev) => {

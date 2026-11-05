@@ -165,6 +165,50 @@ export function krankenversicherung(e, j, W) {
   return { ampel, familie, selbst, ueberJob, beitrag: beitrag ? beitrag.summe : 0, detail: beitrag, kasse: kasse ? kasse.name : null, vergleich, quelle: q("kvdsBemessung") };
 }
 
+// Rechenkette für die erste Ergebniskarte: jede Zeile mit Betrag pro Monat (im Jahresschnitt),
+// kurzem Grund und Sprungziel zur ausführlichen Erklärung. Die Summe der Zeilen ist der Gesamtbetrag.
+export function quittung(e, j, bafoeg, stip, kv, W) {
+  const w = (k) => W[k].wert;
+  const pz = (x) => (x * 100).toLocaleString("de-DE", { maximumFractionDigits: 2 }) + " %";
+  const f = j.monate / 12; // kurzfristig: Abgaben nur in den Arbeitsmonaten, aufs Jahr verteilt
+  const { art, sv } = j;
+  const b = j.brutto.monat;
+  const imUeb = b > w("minijobGrenze") && b <= w("uebergangsbereichBis");
+  const keine = art === "kurzfristig" ? "kurzfristig, keine Sozialabgaben" : art === "minijob" ? "im Minijob keine" : "Werkstudentenprivileg, keine";
+  const reduziert = imUeb ? "reduziert im Übergangsbereich" : "halber Beitrag";
+  const kinderlos = !e.kinder && e.alter >= w("pvKinderlosZuschlagAb");
+  const job = [
+    { text: art === "kurzfristig" || e.jobart === "kurzfristig" ? "Brutto im Jahresschnitt" : "Brutto", betrag: cent(j.brutto.jahr / 12), ziel: "job-panel",
+      grund: e.jobart === "kurzfristig" ? `${eur(b)} in ${j.monate} Monaten, verteilt auf 12` : "dein Verdienst pro Monat" },
+    { text: "Rentenversicherung", betrag: -cent(sv.rv * f), ziel: "job-panel",
+      grund: art === "kurzfristig" ? keine : art === "minijob" ? (e.rvBefreit ? "befreit" : `${pz(w("rvSatz") - w("minijobRvPauschaleAG"))} Eigenanteil im Minijob`) : reduziert },
+    { text: "Kranken- und Pflegeversicherung", betrag: -cent((sv.kv + sv.pv) * f), ziel: "job-panel",
+      grund: art === "midijob" ? reduziert + (kinderlos ? ", mit Zuschlag für Kinderlose" : "") : keine },
+    { text: "Arbeitslosenversicherung", betrag: -cent(sv.av * f), ziel: "job-panel", grund: art === "midijob" ? reduziert : keine },
+    { text: "Lohnsteuer", betrag: -cent(j.steuer.jahr / 12), ziel: "job-panel",
+      grund: art === "minijob" ? "Pauschsteuer zahlt der Arbeitgeber" : j.steuer.jahr === 0 ? "unter dem Grundfreibetrag" : "Schätzung, kommt über die Steuererklärung teils zurück" },
+  ];
+  const zeilen = [...job];
+  const netto = cent(job.reduce((a, z) => a + z.betrag, 0));
+  zeilen.push({ text: "Nebenjob netto", betrag: netto, summe: true });
+  if (bafoeg) {
+    zeilen.push({ text: "BAföG laut Bescheid", betrag: bafoeg.betrag, ziel: "bafoeg-panel", grund: "dein Förderbetrag" });
+    if (bafoeg.kuerzung) zeilen.push({ text: "BAföG-Kürzung", betrag: -bafoeg.kuerzung, ziel: "bafoeg-panel",
+      grund: bafoeg.ausgeschlossen ? "kein BAföG neben einem Begabtenförderungswerk" : `Einkommen über dem Freibetrag von ${eur(w("bafoegFreibetrag"))}` });
+  }
+  if (e.stipendium === "deutschland") zeilen.push({ text: "Deutschlandstipendium", betrag: stip.betrag, ziel: "stip-panel", grund: "unabhängig vom Einkommen" });
+  if (e.stipendium === "sonstig" && stip.betrag) zeilen.push({ text: "Stipendium", betrag: stip.betrag, ziel: "stip-panel", grund: "deine Angabe" });
+  if (e.stipendium === "begabt") {
+    zeilen.push({ text: "Grundstipendium", betrag: cent(e.grundstipendium), ziel: "stip-panel", grund: "deine Angabe" });
+    if (stip.kuerzung) zeilen.push({ text: "Kürzung Grundstipendium", betrag: -stip.kuerzung, ziel: "stip-panel", grund: "Einkommen über dem Freibetrag" });
+    zeilen.push({ text: "Studienkostenpauschale", betrag: cent(e.studienkosten), ziel: "stip-panel", grund: "unabhängig vom Einkommen" });
+  }
+  if (kv.beitrag) zeilen.push({ text: "Eigene Kranken- und Pflegeversicherung", betrag: -kv.beitrag, ziel: "kv-panel",
+    grund: (e.alter >= w("famVersAlter") ? `ab ${w("famVersAlter")} nicht mehr familienversichert` : e.kv === "familie" ? "Einkommen über der Grenze der Familienversicherung" : "du bist selbst versichert") + (kv.kasse ? `, ${kv.kasse}` : "") });
+  const gesamt = cent(zeilen.filter((z) => !z.summe).reduce((a, z) => a + z.betrag, 0));
+  return { zeilen, netto, gesamt };
+}
+
 export function berechne(e, W) {
   const w = (k) => W[k].wert;
   const q = (k) => W[k].quelle;
@@ -282,7 +326,9 @@ export function berechne(e, W) {
     }
   }
 
-  const gesamt = cent(j.netto.schnitt + (bafoeg ? bafoeg.bleibt : 0) + stip.betrag - kv.beitrag);
+  const q2 = quittung(e, j, bafoeg, stip, kv, W);
+  j.netto.schnitt = q2.netto;
+  const gesamt = q2.gesamt;
   const unsicher = Object.entries(W).filter(([, v]) => v && v.unsicher).map(([k, v]) => ({ name: k, hinweis: v.hinweis }));
-  return { ...j, ampeln, bafoeg, stipendium: stip, kv, gesamt, unsicher };
+  return { ...j, ampeln, bafoeg, stipendium: stip, kv, gesamt, zeilen: q2.zeilen, unsicher };
 }

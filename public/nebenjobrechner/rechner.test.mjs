@@ -159,6 +159,27 @@ fall("Kindergeld nach Alter", () => {
   assert.equal(ampel(r({ kindergeld: true, alter: 25 }), "Kindergeld"), undefined);
 });
 
+// Die Rechenkette der ersten Karte ergibt exakt die große Zahl, in allen Jobarten und Kombinationen
+fall("Rechenkette summiert sich zur großen Zahl", () => {
+  const faelle = [
+    { brutto: 603 }, { brutto: 603, rvBefreit: true }, { brutto: 450, alter: 27 },
+    { jobart: "midijob", brutto: 1234.56, alter: 24 }, { jobart: "werkstudent", brutto: 1900, stdVorlesung: 21, alter: 26, kasse: "hkk" },
+    { jobart: "kurzfristig", brutto: 2100, monate: 3, alter: 25 },
+    { brutto: 703, bafoeg: true, bafoegBetrag: 992, stipendium: "deutschland" },
+    { jobart: "midijob", brutto: 703, bafoeg: true, bafoegBetrag: 500, stipendium: "begabt", grundstipendium: 400, studienkosten: 300 },
+    { jobart: "werkstudent", modus: "stunde", stundenlohn: 17.3, stdVorlesung: 18, stdFerien: 35, ferienWochen: 12, stipendium: "sonstig", stipBetrag: 450, kv: "selbst" },
+  ];
+  for (const x of faelle) {
+    const res = r(x);
+    const posten = res.zeilen.filter((z) => !z.summe);
+    const summe = Math.round(posten.reduce((a, z) => a + z.betrag * 100, 0)) / 100;
+    assert.equal(summe, res.gesamt, JSON.stringify(x));
+    const job = res.zeilen.slice(0, res.zeilen.findIndex((z) => z.summe));
+    assert.equal(Math.round(job.reduce((a, z) => a + z.betrag * 100, 0)) / 100, res.zeilen.find((z) => z.summe).betrag);
+    assert.ok(posten.every((z) => z.grund && z.ziel), "jede Zeile hat Grund und Sprungziel");
+  }
+});
+
 // 2027: Minijob-Grenze 633 Euro (Minijob-Zentrale, 7.10.2026)
 fall("2027 Minijob-Grenze", () => {
   assert.equal(berechne({ ...basis, brutto: 633 }, W27).art, "minijob");

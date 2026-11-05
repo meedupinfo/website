@@ -48,7 +48,6 @@
 .frage:focus { outline: none; }
 .schritt { display: grid; gap: 18px; }
 .schritt.aus { display: none; }
-#gesamt:focus { outline: none; }
 .fortschritt { margin: 0; font-size: 0.9rem; color: var(--meedup-muted); }
 .schritt-nav { display: flex; flex-wrap: wrap; gap: 10px; }
 .rechner.onboarding { grid-template-columns: minmax(0, 680px); justify-content: center; }
@@ -60,6 +59,21 @@
 .kassen th, .kassen td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--meedup-line); }
 .kassen td:not(:first-child), .kassen th:not(:first-child) { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .kassen tr.deine td { font-weight: 700; }
+/* Rechenkette in der ersten Karte */
+.quittung { list-style: none; margin: 8px 0 0; padding: 0; border-top: 1px solid rgba(255, 255, 255, 0.3); }
+.quittung li { display: grid; grid-template-columns: 1fr auto; gap: 0 12px; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.18); }
+.quittung a { color: #fff; text-decoration: underline; text-decoration-color: rgba(255, 255, 255, 0.5); text-underline-offset: 3px; }
+.quittung a:hover { text-decoration-color: #fff; }
+.quittung .betrag { font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
+.quittung small { grid-column: 1 / -1; font-size: 0.85rem; color: rgba(255, 255, 255, 0.85); line-height: 1.35; }
+.quittung .null { color: rgba(255, 255, 255, 0.85); }
+.quittung li.zwischen, .quittung li.ende { font-weight: 700; }
+.quittung li.ende { border-bottom: 0; border-top: 2px solid #fff; }
+.warnungen { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px; }
+.warnungen li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.warnungen a { color: #fff; }
+[tabindex="-1"]:focus { outline: none; }
+.ergebnis .cell { scroll-margin-top: 90px; }
 </style>
 <!-- /seite-head -->
 <script>
@@ -270,22 +284,25 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
         <h2 class="titel">Das bleibt dir im Monat</h2>
         <p class="gross" id="gesamt" tabindex="-1">0 €</p>
         <p id="gesamt-text"></p>
+        <h3 class="sr-only">So setzt sich der Betrag zusammen</h3>
+        <ol class="quittung" id="quittung"></ol>
+        <ul class="warnungen" id="warnungen" aria-label="Grenzen, die knapp oder überschritten sind"></ul>
       </div>
-      <div class="cell rv">
+      <div class="cell rv" id="job-panel" tabindex="-1">
         <h2 class="titel">Dein Nebenjob</h2>
         <ul class="posten" id="posten"></ul>
         <p class="hint" id="steuer-hinweis"></p>
       </div>
-      <div class="cell rv">
+      <div class="cell rv" id="grenzen" tabindex="-1">
         <h2 class="titel">Grenzen-Check</h2>
         <ul class="ampeln" id="ampeln"></ul>
       </div>
-      <div class="cell tint" id="bafoeg-panel" hidden>
+      <div class="cell tint" id="bafoeg-panel" tabindex="-1" hidden>
         <h2 class="titel">BAföG</h2>
         <ul class="posten" id="bafoeg-posten"></ul>
         <p class="hint" id="bafoeg-text"></p>
       </div>
-      <div class="cell tint" id="kv-panel" hidden>
+      <div class="cell tint" id="kv-panel" tabindex="-1" hidden>
         <h2 class="titel">Deine Krankenversicherung</h2>
         <ul class="posten" id="kv-posten"></ul>
         <p class="hint" id="kv-text"></p>
@@ -295,7 +312,7 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
           <p class="hint" id="kassen-stand"></p>
         </details>
       </div>
-      <div class="cell tint" id="stip-panel" hidden>
+      <div class="cell tint" id="stip-panel" tabindex="-1" hidden>
         <h2 class="titel">Stipendium</h2>
         <ul class="ampeln" id="stip-punkte"></ul>
       </div>
