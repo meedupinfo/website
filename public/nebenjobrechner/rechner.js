@@ -117,6 +117,54 @@ function grenzeOhneAnrechnung(e, W, stipendiumMonat) {
   return Math.floor(lo * 100) / 100;
 }
 
+// Monatsbeitrag der eigenen Kranken- und Pflegeversicherung im Studium.
+// Bis zur Altersgrenze der studentischen KV (§ 236, § 245 SGB V), danach freiwillig (§ 240 Abs. 4 SGB V).
+export function studiBeitrag(alter, kinder, zusatz, brutto, W) {
+  const w = (k) => W[k].wert;
+  const zuschlag = !kinder && alter >= w("pvKinderlosZuschlagAb") ? w("pvKinderlosZuschlag") : 0;
+  const studentisch = alter < w("kvdsBisAlter");
+  // shortcut: freiwillig zählt hier nur der Nebenjob als Einnahme, weitere Einnahmen fehlen
+  const basis = studentisch ? w("kvdsBemessung") : Math.max(w("freiwilligMindestbemessung"), brutto);
+  const kv = cent(basis * ((studentisch ? w("kvSatz") * w("kvdsSatzAnteil") : w("kvSatzErmaessigt")) + zusatz));
+  const pv = cent(basis * (w("pvSatz") + zuschlag));
+  return { kv, pv, summe: cent(kv + pv), studentisch };
+}
+
+// Familienversicherung prüfen. Wer nicht (mehr) familienversichert ist und nicht über den Job
+// pflichtversichert ist, zahlt den eigenen Beitrag, der vom Gesamtbetrag abgeht.
+export function krankenversicherung(e, j, W) {
+  const w = (k) => W[k].wert;
+  const q = (k) => W[k].quelle;
+  const kassen = w("krankenkassen");
+  const kasse = kassen.find((k) => k.name === e.kasse);
+  const zusatz = kasse ? kasse.zusatz : w("kvZusatzbeitrag");
+  const b = j.brutto.monat;
+  const ueberJob = j.art === "midijob";
+  const zuAlt = e.alter >= w("famVersAlter");
+  const minijob = j.art === "minijob";
+  const grenze = minijob ? w("minijobGrenze") : w("famVersGrenze");
+  const einkommen = minijob ? b : Math.max(0, j.brutto.jahr - w("arbeitnehmerPauschbetrag")) / 12;
+  const familie = e.kv === "familie" && !zuAlt && !ueberJob && einkommen <= grenze;
+  const selbst = !ueberJob && !familie;
+  const beitrag = selbst ? studiBeitrag(e.alter, e.kinder, zusatz, b, W) : null;
+  const preis = beitrag ? ` Im Studium kostet dich das ${kasse ? "bei der " + kasse.name : "im Schnitt"} etwa ${eur(beitrag.summe)} im Monat.` : "";
+  const vergleich = selbst ? kassen.map((k) => ({ name: k.name, bereich: k.bereich, zusatz: k.zusatz, summe: studiBeitrag(e.alter, e.kinder, k.zusatz, b, W).summe })).sort((a, c) => a.summe - c.summe) : [];
+
+  let ampel = null;
+  if (e.kv === "familie" || zuAlt) {
+    const gelbAb = w("ampelGelbAb");
+    let status = einkommen > grenze ? "rot" : einkommen >= grenze * gelbAb ? "gelb" : "gruen";
+    let text = minijob ? `Mit einem Minijob bis ${eur(grenze)} bleibst du familienversichert.`
+      : `Dein Einkommen nach Werbungskosten liegt bei ${eur(einkommen)} im Monat. Die Grenze ist ${eur(grenze)}.`;
+    if (zuAlt) { status = "rot"; text = `Ab ${w("famVersAlter")} endet die Familienversicherung und du musst dich selbst versichern. Ein Freiwilligendienst verlängert sie um seine Dauer.`; }
+    else if (ueberJob) { status = "rot"; text = "Mit diesem Job bist du über den Job pflichtversichert. Die Familienversicherung endet, der Beitrag steht schon oben in den Abgaben."; }
+    else if (einkommen > grenze) text += " Darüber endet die Familienversicherung und du musst dich selbst versichern.";
+    else if (e.alter === w("famVersAlter") - 1 && status === "gruen") { status = "gelb"; text += ` Mit ${w("famVersAlter")} endet sie.`; }
+    ampel = { titel: "Familienversicherung", status, text: text + (status === "rot" && !ueberJob ? preis : ""), quelle: q(zuAlt ? "famVersAlter" : minijob ? "minijobGrenze" : "famVersGrenze") };
+  }
+  return { ampel, familie, selbst, ueberJob, beitrag: beitrag ? beitrag.summe : 0, detail: beitrag, kasse: kasse ? kasse.name : null, vergleich, quelle: q("kvdsBemessung") };
+}
+
 export function berechne(e, W) {
   const w = (k) => W[k].wert;
   const q = (k) => W[k].quelle;
@@ -165,28 +213,16 @@ export function berechne(e, W) {
       text: e.monate > m ? `Mehr als ${m} Monate oder 70 Arbeitstage im Jahr gehen nicht. Dein Job wird dann wie ein Minijob oder Midijob behandelt und so gerechnet.`
         : `Höchstens ${m} Monate oder 70 Arbeitstage im Kalenderjahr, dann fallen keine Sozialabgaben an.` });
   }
-  // 4. Familienversicherung
-  if (e.kv === "familie") {
-    const minijob = j.art === "minijob";
-    const grenze = minijob ? G : w("famVersGrenze");
-    const einkommen = minijob ? b : Math.max(0, j.brutto.jahr - w("arbeitnehmerPauschbetrag")) / 12;
-    let status = ampel(einkommen, grenze);
-    let text = minijob
-      ? `Mit einem Minijob bis ${eur(G)} bleibst du familienversichert.`
-      : `Dein Einkommen nach Werbungskosten liegt bei ${eur(einkommen)} im Monat. Die Grenze ist ${eur(grenze)}.`;
-    if (j.art === "midijob") { status = "rot"; text = "Mit diesem Job bist du selbst pflichtversichert. Die Familienversicherung endet."; }
-    else if (einkommen > grenze) text += " Darüber endet die Familienversicherung und du musst dich selbst versichern.";
-    if (e.alter >= w("famVersAlter")) { status = "rot"; text = `Ab ${w("famVersAlter")} endet die Familienversicherung. Ein Freiwilligendienst verlängert sie um seine Dauer.`; }
-    else if (e.alter === w("famVersAlter") - 1 && status === "gruen") { status = "gelb"; text += ` Mit ${w("famVersAlter")} endet sie.`; }
-    ampeln.push({ titel: "Familienversicherung", status, text, quelle: q(minijob ? "minijobGrenze" : "famVersGrenze") });
-  }
+  // 4. Familienversicherung und eigene Krankenversicherung
+  const kv = krankenversicherung(e, j, W);
+  if (kv.ampel) ampeln.push(kv.ampel);
   // 5. Kindergeld
-  if (e.kindergeld) {
+  // über der Altersgrenze gibt es kein Kindergeld, die Frage entfällt
+  if (e.kindergeld && e.alter < w("kindergeldAlter")) {
     const std = w("kindergeldStunden");
     const schnitt = e.jobart === "kurzfristig" ? 0 : (e.stdVorlesung * (52 - e.ferienWochen) + e.stdFerien * e.ferienWochen) / 52;
     let status = "gruen", text;
-    if (e.alter >= w("kindergeldAlter")) { status = "rot"; text = `Ab ${w("kindergeldAlter")} gibt es kein Kindergeld mehr.`; }
-    else if (e.erstausbildung) text = "In deiner ersten Ausbildung darfst du so viel arbeiten, wie du willst. Ein direkt anschließender Master zählt meist noch dazu.";
+    if (e.erstausbildung) text = "In deiner ersten Ausbildung darfst du so viel arbeiten, wie du willst. Ein direkt anschließender Master zählt meist noch dazu.";
     else if (j.art === "minijob" || e.jobart === "kurzfristig") text = "Ein Minijob oder ein kurzfristiger Job ist für das Kindergeld immer unschädlich.";
     else if (e.stdVorlesung > std) { status = "rot"; text = `Nach der ersten Ausbildung sind höchstens ${std} Stunden pro Woche erlaubt. Mit ${e.stdVorlesung} Stunden fällt das Kindergeld weg.`; }
     else if (e.stdFerien > std) {
@@ -246,7 +282,7 @@ export function berechne(e, W) {
     }
   }
 
-  const gesamt = cent(j.netto.schnitt + (bafoeg ? bafoeg.bleibt : 0) + stip.betrag);
+  const gesamt = cent(j.netto.schnitt + (bafoeg ? bafoeg.bleibt : 0) + stip.betrag - kv.beitrag);
   const unsicher = Object.entries(W).filter(([, v]) => v && v.unsicher).map(([k, v]) => ({ name: k, hinweis: v.hinweis }));
-  return { ...j, ampeln, bafoeg, stipendium: stip, gesamt, unsicher };
+  return { ...j, ampeln, bafoeg, stipendium: stip, kv, gesamt, unsicher };
 }

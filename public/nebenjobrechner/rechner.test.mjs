@@ -1,13 +1,13 @@
 // Prüffälle. Start: node rechner.test.mjs
 // Erwartete Werte stammen aus amtlichen Beispielen und Rechnern (Quelle je Fall), nicht aus diesem Code.
 import assert from "node:assert/strict";
-import { berechne, einkommensteuer, sozialabgaben, bafoegAnrechnung } from "./rechner.js";
+import { berechne, einkommensteuer, sozialabgaben, bafoegAnrechnung, studiBeitrag } from "./rechner.js";
 import W from "./werte/2026.js";
 import W27 from "./werte/2027.js";
 
 const basis = {
   jobart: "minijob", modus: "monat", brutto: 0, stundenlohn: 0, stdVorlesung: 10, stdFerien: 10, ferienWochen: 20, monate: 2,
-  alter: 21, rvBefreit: false, kv: "familie", kinder: false, kindergeld: false, erstausbildung: true,
+  alter: 21, rvBefreit: false, kv: "familie", kasse: "", kinder: false, kindergeld: false, erstausbildung: true,
   bafoeg: false, bafoegBetrag: 0, stipendium: "keins", grundstipendium: 0, studienkosten: 0, stipBetrag: 0,
 };
 const r = (x) => berechne({ ...basis, ...x }, W);
@@ -123,6 +123,40 @@ fall("Begabtenförderungswerk", () => {
   assert.equal(x.bafoeg.bleibt, 0);
   assert.equal(x.stipendium.kuerzung, 77.59);
   assert.equal(x.stipendium.betrag, 622.41);
+});
+
+// Eigene Krankenversicherung: GKV-Spitzenverband Faktenblatt Rechengrößen 2026
+// KV 87,38 Euro plus Zusatzbeitrag (855 mal 2,9 % = 24,80), PV 30,78 Euro, kinderlos 35,91 Euro.
+// Freiwillig ab 30: BMG Beitragsseite, Mindestbemessung 1.318,33 Euro mal 16,9 % = 222,80 Euro KV.
+fall("Selbst versichert im Studium", () => {
+  assert.deepEqual(studiBeitrag(22, false, 0, 500, W), { kv: 87.38, pv: 30.78, summe: 118.16, studentisch: true });
+  assert.equal(studiBeitrag(22, false, 0.029, 500, W).kv, 112.18);
+  assert.equal(studiBeitrag(24, false, 0, 500, W).pv, 35.91);
+  assert.equal(studiBeitrag(31, true, 0.029, 500, W).kv, 222.8);
+});
+// Ab 25 endet die Familienversicherung (§ 10 Abs. 2 Nr. 3 SGB V), der eigene Beitrag geht vom Gesamtbetrag ab
+fall("Familienversicherung endet mit 25", () => {
+  const jung = r({ brutto: 500, alter: 24 });
+  assert.equal(jung.kv.selbst, false);
+  const alt = r({ brutto: 500, alter: 25 });
+  assert.equal(alt.kv.selbst, true);
+  assert.equal(alt.kv.beitrag, 148.09);
+  assert.equal(alt.gesamt, Math.round((jung.gesamt - 148.09) * 100) / 100);
+  assert.equal(ampel(alt, "Familienversicherung"), "rot");
+});
+// Über der Einkommensgrenze endet sie auch: Werkstudent 700 Euro, (700 minus 102,50) über 565 Euro
+fall("Familienversicherung endet über der Einkommensgrenze", () => {
+  const x = r({ jobart: "werkstudent", brutto: 700, alter: 21 });
+  assert.equal(x.kv.selbst, true);
+  assert.equal(ampel(x, "Familienversicherung"), "rot");
+  assert.equal(r({ jobart: "werkstudent", brutto: 660, alter: 21 }).kv.selbst, false);
+  // Midijob: über den Job pflichtversichert, kein zusätzlicher Beitrag
+  assert.equal(r({ jobart: "midijob", brutto: 1000, alter: 26 }).kv.beitrag, 0);
+});
+// Kindergeld gibt es nur bis 25 (§ 32 Abs. 4 EStG), darüber keine Kindergeld-Ampel
+fall("Kindergeld nach Alter", () => {
+  assert.equal(ampel(r({ kindergeld: true, alter: 24 }), "Kindergeld"), "gruen");
+  assert.equal(ampel(r({ kindergeld: true, alter: 25 }), "Kindergeld"), undefined);
 });
 
 // 2027: Minijob-Grenze 633 Euro (Minijob-Zentrale, 7.10.2026)

@@ -55,6 +55,46 @@ export default {
   kindergeldStunden: { wert: 20, quelle: "https://www.gesetze-im-internet.de/estg/__32.html", geprueft: G, hinweis: "§ 32 Abs. 4 Satz 3 EStG, gilt nach abgeschlossener Erstausbildung" },
   kindergeldUeberMonate: { wert: 2, quelle: "https://www.bzst.de/SharedDocs/Downloads/DE/Kindergeldberechtigte/da_kg_2024_randstrichfassung.pdf?__blob=publicationFile&v=2", geprueft: G, hinweis: "DA-KG A 20.3.1: höchstens zwei Monate über 20 Stunden, wenn der Jahresdurchschnitt bei höchstens 20 bleibt" },
 
+  // Eigene Krankenversicherung im Studium
+  kvdsBemessung: { wert: 855, quelle: "https://www.gesetze-im-internet.de/sgb_5/__236.html", geprueft: "2026-11-05", unsicher: true, hinweis: "geltendes Recht. Der Entwurf 30. BAföG-Änderungsgesetz (BT-Drs. 21/8405) hebt die Wohnpauschale ab Sommersemester 2027 auf 440 Euro, dann ab dem Folgesemester 915 Euro" },
+  kvdsSatzAnteil: { wert: 0.7, quelle: "https://www.gesetze-im-internet.de/sgb_5/__245.html", geprueft: "2026-11-05", hinweis: "sieben Zehntel des allgemeinen Beitragssatzes, Zusatzbeitrag der Kasse voll" },
+  kvdsBisAlter: { wert: 30, quelle: "https://www.gesetze-im-internet.de/sgb_5/__5.html", geprueft: "2026-11-05", hinweis: "§ 5 Abs. 1 Nr. 9 SGB V, längstens bis zur Vollendung des 30. Lebensjahres" },
+  kvSatzErmaessigt: { wert: 0.14, quelle: "https://www.gesetze-im-internet.de/sgb_5/__243.html", geprueft: "2026-11-05", hinweis: "ohne Krankengeldanspruch, gilt für freiwillig versicherte Studierende" },
+  freiwilligMindestbemessung: { wert: 1376.67, quelle: "https://www.bmas.de/DE/Service/Presse/Pressemitteilungen/2026/bundeskabinett-beschliesst-sozialversicherungsrechengroessen-2027.html", geprueft: "2026-11-05", unsicher: true, hinweis: "ein Drittel der Bezugsgröße 4.130 Euro laut Kabinettsbeschluss, Bundesrat steht aus" },
+
+  // Krankenkassen, Zusatzbeitrag je Kasse (Anteil, nicht Prozent)
+  krankenkassen: {
+    wert: [
+      { name: "Techniker Krankenkasse", zusatz: 0.0269, bereich: "bundesweit" },
+      { name: "BARMER", zusatz: 0.0329, bereich: "bundesweit" },
+      { name: "DAK-Gesundheit", zusatz: 0.032, bereich: "bundesweit" },
+      { name: "KKH", zusatz: 0.0378, bereich: "bundesweit" },
+      { name: "hkk", zusatz: 0.0259, bereich: "bundesweit" },
+      { name: "HEK", zusatz: 0.0289, bereich: "bundesweit" },
+      { name: "IKK classic", zusatz: 0.0385, bereich: "bundesweit" },
+      { name: "IKK gesund plus", zusatz: 0.0339, bereich: "bundesweit" },
+      { name: "BIG direkt gesund", zusatz: 0.0369, bereich: "bundesweit" },
+      { name: "Mobil Krankenkasse", zusatz: 0.0389, bereich: "bundesweit" },
+      { name: "Audi BKK", zusatz: 0.026, bereich: "bundesweit" },
+      { name: "SBK", zusatz: 0.038, bereich: "bundesweit" },
+      { name: "pronova BKK", zusatz: 0.037, bereich: "bundesweit" },
+      { name: "VIACTIV", zusatz: 0.0419, bereich: "bundesweit" },
+      { name: "Knappschaft", zusatz: 0.043, bereich: "bundesweit" },
+      { name: "AOK PLUS", zusatz: 0.031, bereich: "Sachsen, Thüringen" },
+      { name: "AOK Bayern", zusatz: 0.0269, bereich: "Bayern" },
+      { name: "AOK Baden-Württemberg", zusatz: 0.0299, bereich: "Baden-Württemberg" },
+      { name: "AOK Nordost", zusatz: 0.035, bereich: "Berlin, Brandenburg, Mecklenburg-Vorpommern" },
+      { name: "AOK Niedersachsen", zusatz: 0.0298, bereich: "Niedersachsen" },
+      { name: "AOK Rheinland/Hamburg", zusatz: 0.0329, bereich: "Hamburg, Nordrhein-Westfalen" },
+      { name: "AOK NordWest", zusatz: 0.0299, bereich: "Nordrhein-Westfalen, Schleswig-Holstein" },
+      { name: "AOK Hessen", zusatz: 0.0298, bereich: "Hessen" },
+      { name: "AOK Rheinland-Pfalz/Saarland", zusatz: 0.0247, bereich: "Rheinland-Pfalz, Saarland" },
+      { name: "AOK Bremen/Bremerhaven", zusatz: 0.0329, bereich: "Bremen" },
+      { name: "AOK Sachsen-Anhalt", zusatz: 0.0289, bereich: "Sachsen-Anhalt" },
+    ],
+    quelle: "https://www.gkv-spitzenverband.de/krankenkassenliste.pdf", geprueft: "2026-11-05", unsicher: true, hinweis: "Die Kassen legen ihre Zusatzbeiträge für 2027 im Dezember fest. Bis dahin stehen hier die Sätze von 2026.",
+  },
+
   // Stipendien
   studienkostenpauschale: { wert: 300, quelle: "https://www.bmftr.bund.de/SharedDocs/Downloads/DE/2026/begabtenfoerderung_zus_nebenbestimmungen_01.10.26.pdf?__blob=publicationFile", geprueft: G, hinweis: "ZNB I.2.2, einkommensunabhängig. Eigenes Einkommen mindert nach ZNB I.3 nur das Grundstipendium, nach §§ 21 bis 25 BAföG" },
   deutschlandstipendium: { wert: 300, quelle: "https://www.gesetze-im-internet.de/stipg/__5.html", geprueft: G },

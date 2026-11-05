@@ -42,6 +42,24 @@
 .pill.ampel-gelb { background: #f0c75e; color: var(--meedup-sea); }
 .pill.ampel-rot { background: #b3402e; color: #fff; }
 [hidden] { display: none !important; }
+.hinweisbox { margin: var(--gap) 0 0; padding: 16px 20px; border-radius: var(--r); background: var(--meedup-tint); color: var(--meedup-text); font-size: 0.95rem; }
+/* Onboarding: eine Frage pro Schritt, danach alle Fragen und das Ergebnis */
+.frage { font-size: clamp(1.3rem, 3vw, 1.7rem); margin-bottom: 14px; }
+.frage:focus { outline: none; }
+.schritt { display: grid; gap: 18px; }
+.schritt.aus { display: none; }
+#gesamt:focus { outline: none; }
+.fortschritt { margin: 0; font-size: 0.9rem; color: var(--meedup-muted); }
+.schritt-nav { display: flex; flex-wrap: wrap; gap: 10px; }
+.rechner.onboarding { grid-template-columns: minmax(0, 680px); justify-content: center; }
+.rechner:not(.onboarding) .frage { font-size: 1.1rem; margin: 10px 0 0; }
+.rechner:not(.onboarding) .schritt + .schritt { border-top: 1px solid var(--meedup-line); padding-top: 18px; }
+.kassen summary { cursor: pointer; font-weight: 500; padding: 6px 0; }
+.tabelle { overflow-x: auto; }
+.kassen table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin-top: 8px; }
+.kassen th, .kassen td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--meedup-line); }
+.kassen td:not(:first-child), .kassen th:not(:first-child) { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.kassen tr.deine td { font-weight: 700; }
 </style>
 <!-- /seite-head -->
 <script>
@@ -73,148 +91,184 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
         <p class="lead">Was bleibt dir vom Nebenjob netto? Welche Grenze wird knapp? Und was passiert mit BAföG und Stipendium? Trag deine Daten ein, das Ergebnis rechnet sofort mit.</p>
       </div>
     </div>
+    <p class="hinweisbox" role="note">Wichtig: Wir geben keine Finanz-, Steuer- oder Rechtsberatung. Der Rechner arbeitet mit amtlichen Werten und vereinfachten Rechenwegen, deshalb gibt es keine Garantie für die Richtigkeit der Ergebnisse. Verbindlich sind nur deine Bescheide und die Auskunft von Krankenkasse, Familienkasse, Finanzamt oder BAföG-Amt.</p>
   </div>
 </section>
 <section class="section" aria-label="Rechner">
-  <div class="wrap bento two rechner">
+  <div class="wrap bento two rechner onboarding" id="rechner">
     <form id="eingaben" class="rv" novalidate aria-label="Deine Angaben">
-      <div class="zwei">
+      <p class="fortschritt" id="fortschritt" aria-live="polite"></p>
+
+      <div class="schritt" data-schritt>
+        <h2 class="frage" tabindex="-1">Wie alt bist du?</h2>
+        <div class="zwei">
+          <div>
+            <label for="alter">Dein Alter</label>
+            <input type="number" id="alter" name="alter" min="15" max="70" step="1" value="21" inputmode="numeric">
+          </div>
+          <div>
+            <label for="jahr">Für welches Jahr rechnest du?</label>
+            <select id="jahr" name="jahr"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="schritt" data-schritt data-zeige="kgfrage">
+        <h2 class="frage" tabindex="-1">Bekommen deine Eltern Kindergeld für dich?</h2>
+        <fieldset>
+          <legend class="sr-only">Kindergeld</legend>
+          <div class="segmented">
+            <input type="radio" id="kg-nein" name="kindergeld" value="nein" checked><label for="kg-nein">Nein</label>
+            <input type="radio" id="kg-ja" name="kindergeld" value="ja"><label for="kg-ja">Ja</label>
+          </div>
+        </fieldset>
+        <fieldset data-zeige="kindergeld">
+          <legend>Hast du schon eine Ausbildung oder ein Studium abgeschlossen?</legend>
+          <div class="segmented">
+            <input type="radio" id="erst-ja" name="erstausbildung" value="ja" checked><label for="erst-ja">Nein, ist meine erste</label>
+            <input type="radio" id="erst-nein" name="erstausbildung" value="nein"><label for="erst-nein">Ja</label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="schritt" data-schritt>
+        <h2 class="frage" tabindex="-1">Was für einen Job hast du?</h2>
+        <fieldset>
+          <legend class="sr-only">Jobart</legend>
+          <div class="segmented">
+            <input type="radio" id="job-mini" name="jobart" value="minijob" checked><label for="job-mini">Minijob</label>
+            <input type="radio" id="job-midi" name="jobart" value="midijob"><label for="job-midi">Midijob</label>
+            <input type="radio" id="job-werk" name="jobart" value="werkstudent"><label for="job-werk">Werkstudent</label>
+            <input type="radio" id="job-kurz" name="jobart" value="kurzfristig"><label for="job-kurz">Kurzfristig</label>
+          </div>
+          <p class="hint" id="jobart-hinweis"></p>
+        </fieldset>
+        <div class="check" data-zeige="minijob">
+          <input type="checkbox" id="rvBefreit" name="rvBefreit">
+          <label for="rvBefreit">Ich habe mich von der Rentenversicherungspflicht befreien lassen</label>
+        </div>
+      </div>
+
+      <div class="schritt" data-schritt>
+        <h2 class="frage" tabindex="-1">Wie viel verdienst du?</h2>
+        <fieldset>
+          <legend>Verdienst angeben als</legend>
+          <div class="segmented">
+            <input type="radio" id="modus-monat" name="modus" value="monat" checked><label for="modus-monat">Monatsbrutto</label>
+            <input type="radio" id="modus-stunde" name="modus" value="stunde"><label for="modus-stunde">Stundenlohn</label>
+          </div>
+        </fieldset>
+        <div data-modus="monat">
+          <label for="brutto" id="brutto-label">Brutto pro Monat in Euro</label>
+          <input type="number" id="brutto" name="brutto" min="0" step="1" value="500" inputmode="decimal">
+          <p class="hint" data-nicht="kurzfristig">Bei schwankendem Lohn nimm den Durchschnitt übers Jahr.</p>
+        </div>
+        <div data-modus="stunde">
+          <label for="stundenlohn">Stundenlohn brutto in Euro</label>
+          <input type="number" id="stundenlohn" name="stundenlohn" min="0" step="0.01" inputmode="decimal">
+          <p class="hint" id="mindestlohn-hinweis"></p>
+        </div>
+      </div>
+
+      <div class="schritt" data-schritt data-zeige="arbeitszeit">
+        <h2 class="frage" tabindex="-1">Wie viel arbeitest du?</h2>
+        <div class="zwei" data-zeige="stunden">
+          <div>
+            <label for="stdVorlesung">Wochenstunden in der Vorlesungszeit</label>
+            <input type="number" id="stdVorlesung" name="stdVorlesung" min="0" max="80" step="0.5" value="10" inputmode="decimal">
+          </div>
+          <div data-nicht="kurzfristig">
+            <label for="stdFerien">Wochenstunden in den Semesterferien</label>
+            <input type="number" id="stdFerien" name="stdFerien" min="0" max="80" step="0.5" value="10" inputmode="decimal">
+          </div>
+          <div data-nicht="kurzfristig">
+            <label for="ferienWochen">Wochen Semesterferien im Jahr</label>
+            <input type="number" id="ferienWochen" name="ferienWochen" min="0" max="52" step="1" value="20" inputmode="numeric">
+            <p class="hint">Steht im Semesterkalender deiner Hochschule.</p>
+          </div>
+        </div>
+        <div data-zeige="kurzfristig">
+          <label for="monate">In wie vielen Monaten im Jahr arbeitest du?</label>
+          <input type="number" id="monate" name="monate" min="1" max="12" step="1" value="2" inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="schritt" data-schritt>
+        <h2 class="frage" tabindex="-1">Wie bist du krankenversichert?</h2>
+        <fieldset data-zeige="famfrage">
+          <legend class="sr-only">Krankenversicherung</legend>
+          <div class="segmented">
+            <input type="radio" id="kv-fam" name="kv" value="familie" checked><label for="kv-fam">Über meine Eltern</label>
+            <input type="radio" id="kv-selbst" name="kv" value="selbst"><label for="kv-selbst">Selbst</label>
+          </div>
+        </fieldset>
+        <p class="hint" data-zeige="famalt" id="famalt-hinweis"></p>
         <div>
-          <label for="jahr">Jahr</label>
-          <select id="jahr" name="jahr"></select>
+          <label for="kasse">Deine Krankenkasse</label>
+          <select id="kasse" name="kasse"><option value="">Weiß ich nicht, Durchschnitt nehmen</option></select>
+          <p class="hint">Wichtig, wenn du dich selbst versichern musst. Der Beitrag hängt vom Zusatzbeitrag deiner Kasse ab.</p>
         </div>
+        <div class="check" data-zeige="kinderlos">
+          <input type="checkbox" id="kinder" name="kinder">
+          <label for="kinder">Ich habe Kinder</label>
+        </div>
+      </div>
+
+      <div class="schritt" data-schritt>
+        <h2 class="frage" tabindex="-1">Bekommst du BAföG?</h2>
+        <fieldset>
+          <legend class="sr-only">BAföG</legend>
+          <div class="segmented">
+            <input type="radio" id="bafoeg-nein" name="bafoeg" value="nein" checked><label for="bafoeg-nein">Nein</label>
+            <input type="radio" id="bafoeg-ja" name="bafoeg" value="ja"><label for="bafoeg-ja">Ja</label>
+          </div>
+        </fieldset>
+        <div data-zeige="bafoeg">
+          <label for="bafoegBetrag">Dein aktueller BAföG-Betrag pro Monat in Euro</label>
+          <input type="number" id="bafoegBetrag" name="bafoegBetrag" min="0" step="1" value="600" inputmode="decimal">
+          <p class="hint">So steht er im Bescheid, bevor dein Nebenjob angerechnet wird.</p>
+        </div>
+      </div>
+
+      <div class="schritt" data-schritt>
+        <h2 class="frage" tabindex="-1">Hast du ein Stipendium?</h2>
         <div>
-          <label for="alter">Dein Alter</label>
-          <input type="number" id="alter" name="alter" min="15" max="70" step="1" value="21" inputmode="numeric">
+          <label for="stipendium">Stipendium</label>
+          <select id="stipendium" name="stipendium">
+            <option value="keins">Keins</option>
+            <option value="deutschland">Deutschlandstipendium</option>
+            <option value="begabt">Begabtenförderungswerk</option>
+            <option value="sonstig">Sonstiges Stipendium</option>
+          </select>
+        </div>
+        <div class="zwei" data-zeige="begabt">
+          <div>
+            <label for="grundstipendium">Grundstipendium pro Monat in Euro</label>
+            <input type="number" id="grundstipendium" name="grundstipendium" min="0" step="1" value="0" inputmode="decimal">
+          </div>
+          <div>
+            <label for="studienkosten">Studienkostenpauschale pro Monat in Euro</label>
+            <input type="number" id="studienkosten" name="studienkosten" min="0" step="1" inputmode="decimal">
+          </div>
+        </div>
+        <div data-zeige="sonstig">
+          <label for="stipBetrag">Stipendium pro Monat in Euro</label>
+          <input type="number" id="stipBetrag" name="stipBetrag" min="0" step="1" value="0" inputmode="decimal">
         </div>
       </div>
 
-      <fieldset>
-        <legend>Jobart</legend>
-        <div class="segmented">
-          <input type="radio" id="job-mini" name="jobart" value="minijob" checked><label for="job-mini">Minijob</label>
-          <input type="radio" id="job-midi" name="jobart" value="midijob"><label for="job-midi">Midijob</label>
-          <input type="radio" id="job-werk" name="jobart" value="werkstudent"><label for="job-werk">Werkstudent</label>
-          <input type="radio" id="job-kurz" name="jobart" value="kurzfristig"><label for="job-kurz">Kurzfristig</label>
-        </div>
-      </fieldset>
-
-      <div class="check" data-zeige="minijob">
-        <input type="checkbox" id="rvBefreit" name="rvBefreit">
-        <label for="rvBefreit">Ich habe mich von der Rentenversicherungspflicht befreien lassen</label>
-      </div>
-
-      <fieldset>
-        <legend>Verdienst angeben als</legend>
-        <div class="segmented">
-          <input type="radio" id="modus-monat" name="modus" value="monat" checked><label for="modus-monat">Monatsbrutto</label>
-          <input type="radio" id="modus-stunde" name="modus" value="stunde"><label for="modus-stunde">Stundenlohn</label>
-        </div>
-      </fieldset>
-
-      <div data-modus="monat">
-        <label for="brutto" id="brutto-label">Brutto pro Monat in Euro</label>
-        <input type="number" id="brutto" name="brutto" min="0" step="1" value="500" inputmode="decimal">
-        <p class="hint" data-nicht="kurzfristig">Bei schwankendem Lohn nimm den Durchschnitt übers Jahr.</p>
-      </div>
-      <div data-modus="stunde">
-        <label for="stundenlohn">Stundenlohn brutto in Euro</label>
-        <input type="number" id="stundenlohn" name="stundenlohn" min="0" step="0.01" inputmode="decimal">
-        <p class="hint" id="mindestlohn-hinweis"></p>
-      </div>
-
-      <div class="zwei" data-zeige="stunden">
-        <div>
-          <label for="stdVorlesung">Wochenstunden in der Vorlesungszeit</label>
-          <input type="number" id="stdVorlesung" name="stdVorlesung" min="0" max="80" step="0.5" value="10" inputmode="decimal">
-        </div>
-        <div data-nicht="kurzfristig">
-          <label for="stdFerien">Wochenstunden in den Semesterferien</label>
-          <input type="number" id="stdFerien" name="stdFerien" min="0" max="80" step="0.5" value="10" inputmode="decimal">
-        </div>
-        <div data-nicht="kurzfristig">
-          <label for="ferienWochen">Wochen Semesterferien im Jahr</label>
-          <input type="number" id="ferienWochen" name="ferienWochen" min="0" max="52" step="1" value="20" inputmode="numeric">
-          <p class="hint">Steht im Semesterkalender deiner Hochschule.</p>
-        </div>
-      </div>
-
-      <div data-zeige="kurzfristig">
-        <label for="monate">In wie vielen Monaten im Jahr arbeitest du?</label>
-        <input type="number" id="monate" name="monate" min="1" max="12" step="1" value="2" inputmode="numeric">
-      </div>
-
-      <fieldset>
-        <legend>Krankenversicherung</legend>
-        <div class="segmented">
-          <input type="radio" id="kv-fam" name="kv" value="familie" checked><label for="kv-fam">Familienversichert</label>
-          <input type="radio" id="kv-selbst" name="kv" value="selbst"><label for="kv-selbst">Selbst versichert</label>
-        </div>
-      </fieldset>
-
-      <div class="check" data-zeige="kinderlos">
-        <input type="checkbox" id="kinder" name="kinder">
-        <label for="kinder">Ich habe Kinder</label>
-      </div>
-
-      <fieldset>
-        <legend>Bekommst du Kindergeld?</legend>
-        <div class="segmented">
-          <input type="radio" id="kg-nein" name="kindergeld" value="nein" checked><label for="kg-nein">Nein</label>
-          <input type="radio" id="kg-ja" name="kindergeld" value="ja"><label for="kg-ja">Ja</label>
-        </div>
-      </fieldset>
-      <fieldset data-zeige="kindergeld">
-        <legend>Hast du schon eine Ausbildung oder ein Studium abgeschlossen?</legend>
-        <div class="segmented">
-          <input type="radio" id="erst-ja" name="erstausbildung" value="ja" checked><label for="erst-ja">Nein, ist meine erste</label>
-          <input type="radio" id="erst-nein" name="erstausbildung" value="nein"><label for="erst-nein">Ja</label>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Bekommst du BAföG?</legend>
-        <div class="segmented">
-          <input type="radio" id="bafoeg-nein" name="bafoeg" value="nein" checked><label for="bafoeg-nein">Nein</label>
-          <input type="radio" id="bafoeg-ja" name="bafoeg" value="ja"><label for="bafoeg-ja">Ja</label>
-        </div>
-      </fieldset>
-      <div data-zeige="bafoeg">
-        <label for="bafoegBetrag">Dein aktueller BAföG-Betrag pro Monat in Euro</label>
-        <input type="number" id="bafoegBetrag" name="bafoegBetrag" min="0" step="1" value="600" inputmode="decimal">
-        <p class="hint">So steht er im Bescheid, bevor dein Nebenjob angerechnet wird.</p>
-      </div>
-
-      <div>
-        <label for="stipendium">Stipendium</label>
-        <select id="stipendium" name="stipendium">
-          <option value="keins">Keins</option>
-          <option value="deutschland">Deutschlandstipendium</option>
-          <option value="begabt">Begabtenförderungswerk</option>
-          <option value="sonstig">Sonstiges Stipendium</option>
-        </select>
-      </div>
-      <div class="zwei" data-zeige="begabt">
-        <div>
-          <label for="grundstipendium">Grundstipendium pro Monat in Euro</label>
-          <input type="number" id="grundstipendium" name="grundstipendium" min="0" step="1" value="0" inputmode="decimal">
-        </div>
-        <div>
-          <label for="studienkosten">Studienkostenpauschale pro Monat in Euro</label>
-          <input type="number" id="studienkosten" name="studienkosten" min="0" step="1" inputmode="decimal">
-        </div>
-      </div>
-      <div data-zeige="sonstig">
-        <label for="stipBetrag">Stipendium pro Monat in Euro</label>
-        <input type="number" id="stipBetrag" name="stipBetrag" min="0" step="1" value="0" inputmode="decimal">
+      <div class="schritt-nav">
+        <button type="button" class="btn btn-ghost" id="zurueck">Zurück</button>
+        <button type="submit" class="btn" id="weiter">Weiter</button>
+        <button type="button" class="btn btn-ghost" id="einzeln" hidden>Fragen einzeln durchgehen</button>
       </div>
     </form>
 
-    <div class="ergebnis" aria-live="polite">
+    <div class="ergebnis" id="ergebnis" aria-live="polite">
       <div class="cell yale rv">
         <svg class="star" data-speed="0.08" style="--s:220px;--o:.12;right:-60px;top:-70px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
         <h2 class="titel">Das bleibt dir im Monat</h2>
-        <p class="gross" id="gesamt">0 €</p>
+        <p class="gross" id="gesamt" tabindex="-1">0 €</p>
         <p id="gesamt-text"></p>
       </div>
       <div class="cell rv">
@@ -230,6 +284,16 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
         <h2 class="titel">BAföG</h2>
         <ul class="posten" id="bafoeg-posten"></ul>
         <p class="hint" id="bafoeg-text"></p>
+      </div>
+      <div class="cell tint" id="kv-panel" hidden>
+        <h2 class="titel">Deine Krankenversicherung</h2>
+        <ul class="posten" id="kv-posten"></ul>
+        <p class="hint" id="kv-text"></p>
+        <details class="kassen">
+          <summary>Studentenbeiträge der Krankenkassen vergleichen</summary>
+          <div class="tabelle"><table><caption class="sr-only">Monatlicher Beitrag für Kranken- und Pflegeversicherung je Krankenkasse</caption><thead><tr><th scope="col">Krankenkasse</th><th scope="col">Zusatzbeitrag</th><th scope="col">Pro Monat</th></tr></thead><tbody id="kassen-tabelle"></tbody></table></div>
+          <p class="hint" id="kassen-stand"></p>
+        </details>
       </div>
       <div class="cell tint" id="stip-panel" hidden>
         <h2 class="titel">Stipendium</h2>
