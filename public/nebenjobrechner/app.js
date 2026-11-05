@@ -21,7 +21,80 @@ const JOBINFO = (W) => ({
 // Jahr: aktuelles Jahr, sonst das neueste vorhandene
 const jahre = Object.keys(JAHRE);
 const aktuell = String(new Date().getFullYear());
-$("jahr").innerHTML = jahre.map((j) => `<option ${j === (JAHRE[aktuell] ? aktuell : jahre.at(-1)) ? "selected" : ""}>${j}</option>`).join("");
+const start = JAHRE[aktuell] ? aktuell : jahre.at(-1);
+$("jahr-wahl").innerHTML = jahre.map((j) => `<input type="radio" id="jahr-${j}" name="jahr" value="${j}"${j === start ? " checked" : ""}><label for="jahr-${j}">${j}</label>`).join("");
+const jahr = () => new FormData(form).get("jahr");
+
+// Regler: jedes Zahlenfeld mit data-slider bekommt einen Schieberegler, beide bleiben synchron.
+// Das Zahlenfeld zeigt den Wert groß und erlaubt exakte Eingaben.
+const regler = [...form.querySelectorAll("[data-slider]")].map((zahl) => {
+  const [min, max, step] = zahl.dataset.slider.split(",");
+  const label = form.querySelector(`label[for="${zahl.id}"]`);
+  label.id = label.id || `${zahl.id}-label`;
+  const kopf = document.createElement("div");
+  kopf.className = "regler-kopf";
+  const wert = document.createElement("span");
+  wert.className = "regler-wert";
+  label.before(kopf);
+  kopf.append(label, wert);
+  const einheit = document.createElement("span");
+  einheit.className = "einheit";
+  einheit.textContent = zahl.dataset.einheit.replace("Euro", "€").replace("Stunden", "Std.");
+  einheit.setAttribute("aria-hidden", "true");
+  wert.append(zahl, einheit);
+  const spur = Object.assign(document.createElement("input"), { type: "range", min, max, step, className: "spur" });
+  spur.setAttribute("aria-labelledby", label.id);
+  const marken = document.createElement("div");
+  marken.className = "marken";
+  marken.setAttribute("aria-hidden", "true");
+  kopf.after(spur, marken);
+  spur.addEventListener("input", () => { zahl.value = spur.value; });
+  return { zahl, spur, marken, min: +min, max: +max };
+});
+
+// Grenzen auf der Spur, farbig wie die Ampel. Alle Werte aus werte/<jahr>.js.
+const FARBE = { gruen: "var(--meedup-fern)", gelb: "#f0c75e", rot: "#b3402e", neutral: "#7d8b99" };
+function grenzen(id, e, W, r) {
+  const w = (k) => W[k].wert;
+  const ampel = (g) => [[g * w("ampelGelbAb"), "gruen"], [g, "gelb"], [Infinity, "rot"]];
+  const G = w("minijobGrenze"), OG = w("uebergangsbereichBis"), std = w("werkstudentStunden");
+  const zweit = e.kindergeld && !e.erstausbildung;
+  const bafoeg = r.bafoeg && r.bafoeg.grenze ? [{ wert: r.bafoeg.grenze, text: "BAföG-Grenze" }] : [];
+  if (id === "brutto" && e.jobart === "minijob") return { marken: [{ wert: G, text: "Minijob-Grenze" }, ...bafoeg], zonen: ampel(G) };
+  if (id === "brutto" && e.jobart === "midijob") return { marken: [{ wert: G, text: "Minijob-Grenze" }, { wert: OG, text: "Ende Übergangsbereich" }, ...bafoeg], zonen: [[G, "neutral"], ...ampel(OG)] };
+  if (id === "brutto") return { marken: [...(e.jobart === "werkstudent" ? [{ wert: G, text: "Minijob-Grenze" }, { wert: OG, text: "Ende Übergangsbereich" }] : []), ...bafoeg], zonen: [] };
+  if (id === "stundenlohn") return { marken: [{ wert: w("mindestlohn"), text: "Mindestlohn" }], zonen: [[w("mindestlohn") - 0.001, "rot"], [Infinity, "neutral"]] };
+  if (id === "stdVorlesung" && (e.jobart === "werkstudent" || zweit)) return { marken: [{ wert: std, text: `${std} Stunden` }], zonen: ampel(std) };
+  if (id === "stdFerien" && (e.jobart === "werkstudent" || zweit)) return { marken: [{ wert: std, text: `${std} Stunden` }], zonen: [] };
+  if (id === "alter") return { marken: [{ wert: w("famVersAlter"), text: "Familienversicherung endet" }, { wert: w("kvdsBisAlter"), text: "Studentische KV endet" }], zonen: [] };
+  if (id === "monate") return { marken: [{ wert: w("kurzfristigMonate"), text: `höchstens ${w("kurzfristigMonate")}` }], zonen: [[w("kurzfristigMonate"), "gruen"], [Infinity, "rot"]] };
+  if (id === "stipBetrag" && e.bafoeg) return { marken: [{ wert: w("bafoegStipendiumFrei"), text: "BAföG-frei bis hier" }], zonen: [] };
+  return { marken: [], zonen: [] };
+}
+
+function regler_zeigen(e, W, r) {
+  for (const g of regler) {
+    const v = parseFloat(g.zahl.value) || 0;
+    g.spur.value = v;
+    g.spur.setAttribute("aria-valuetext", `${v.toLocaleString("de-DE")} ${g.zahl.dataset.einheit}`);
+    const pos = (x) => Math.max(0, Math.min(100, ((x - g.min) / (g.max - g.min)) * 100));
+    const { marken, zonen } = grenzen(g.zahl.id, e, W, r);
+    let von = 0;
+    const teile = zonen.map(([bis, farbe]) => { const b = pos(bis); const t = `${FARBE[farbe]} ${von}% ${b}%`; von = b; return t; });
+    g.spur.style.setProperty("--spur", teile.length ? `linear-gradient(to right, ${teile.join(", ")})` : FARBE.neutral);
+    // nahe beieinanderliegende Marken zusammenfassen, damit nichts überlappt
+    const liste = [];
+    for (const m of marken.filter((m) => m.wert >= g.min && m.wert <= g.max).sort((x, y) => x.wert - y.wert)) {
+      const letzte = liste.at(-1);
+      if (letzte && pos(m.wert) - pos(letzte.wert) < 12) letzte.text += ` und ${m.text}`;
+      else liste.push({ ...m });
+    }
+    // jede Marke in eine eigene Zeile, Beschriftung zeigt zur freien Seite
+    g.marken.style.setProperty("--n", liste.length);
+    g.marken.hidden = !liste.length;
+    g.marken.innerHTML = liste.map((m, i) => `<span class="${pos(m.wert) > 50 ? "rechts" : ""}" style="left:${pos(m.wert)}%;--i:${i}">${m.text}</span>`).join("");
+  }
+}
 
 function kassenAuswahl(W) {
   const sel = $("kasse");
@@ -39,7 +112,7 @@ function lesen(W) {
     brutto: zahl("brutto"), stundenlohn: zahl("stundenlohn"),
     stdVorlesung: zahl("stdVorlesung"), stdFerien: zahl("stdFerien"),
     ferienWochen: Math.min(52, zahl("ferienWochen")), monate: Math.max(1, Math.min(12, Math.round(zahl("monate")) || 1)),
-    alter, rvBefreit: f.get("rvBefreit") === "on", kinder: f.get("kinder") === "on", kasse: f.get("kasse") || "",
+    alter, rvBefreit: f.get("rvBefreit") === "ja", kinder: f.get("kinder") === "ja", kasse: f.get("kasse") || "",
     // über den Altersgrenzen entfallen Kindergeld und Familienversicherung automatisch
     kv: alter >= W.famVersAlter.wert ? "selbst" : f.get("kv"),
     kindergeld: alter < W.kindergeldAlter.wert && f.get("kindergeld") === "ja", erstausbildung: f.get("erstausbildung") === "ja",
@@ -63,7 +136,9 @@ function sichtbarkeit(e, W) {
   form.querySelectorAll("[data-modus]").forEach((el) => (el.hidden = el.dataset.modus !== e.modus));
   form.querySelectorAll("[data-nicht]").forEach((el) => (el.hidden = el.dataset.nicht === e.jobart));
   $("brutto-label").textContent = kurz ? "Brutto pro Arbeitsmonat in Euro" : "Brutto pro Monat in Euro";
-  $("jobart-hinweis").textContent = JOBINFO(W)[e.jobart];
+  for (const [art, text] of Object.entries(JOBINFO(W))) $(`info-${art}`).textContent = text;
+  $("info-deutschland").textContent = `${eur(W.deutschlandstipendium.wert)} im Monat, unabhängig vom Einkommen`;
+  $("kinder-hinweis").textContent = `Ohne Kinder zahlst du ab ${W.pvKinderlosZuschlagAb.wert} einen kleinen Zuschlag zur Pflegeversicherung.`;
   $("famalt-hinweis").textContent = `Ab ${W.famVersAlter.wert} kannst du nicht mehr über deine Eltern familienversichert sein. Wir rechnen deshalb mit eigener Versicherung.`;
   $("mindestlohn-hinweis").textContent = `Mindestlohn ${W.jahr}: ${eur(W.mindestlohn.wert)} pro Stunde.` +
     (e.modus === "stunde" && e.stundenlohn > 0 && e.stundenlohn < W.mindestlohn.wert ? " Dein Stundenlohn liegt darunter." : "");
@@ -73,7 +148,7 @@ const li = (a, b, cls = "") => `<li class="${cls}"><span>${a}</span><span>${b}</
 const punkt = (p) => `<li><span class="pill ampel-${p.status}">${{ gruen: "passt", gelb: "knapp", rot: "überschritten" }[p.status]}</span><div><strong>${p.titel}</strong><p>${p.text} <a href="${p.quelle}" rel="noopener">Quelle</a></p></div></li>`;
 
 function zeigen() {
-  const W = JAHRE[$("jahr").value];
+  const W = JAHRE[jahr()];
   if ($("kasse").options.length !== W.krankenkassen.wert.length + 1) kassenAuswahl(W);
   const e = lesen(W);
   // leeres Feld heißt: Standard-Studienkostenpauschale des Jahres
@@ -81,6 +156,7 @@ function zeigen() {
   if ($("studienkosten").value === "") e.studienkosten = W.studienkostenpauschale.wert;
   sichtbarkeit(e, W);
   const r = berechne(e, W);
+  regler_zeigen(e, W, r);
   const kurz = e.jobart === "kurzfristig";
 
   $("gesamt").textContent = eur(r.gesamt);
