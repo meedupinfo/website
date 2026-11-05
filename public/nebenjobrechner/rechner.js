@@ -332,3 +332,10 @@ export function berechne(e, W) {
   const unsicher = Object.entries(W).filter(([, v]) => v && v.unsicher).map(([k, v]) => ({ name: k, hinweis: v.hinweis }));
   return { ...j, ampeln, bafoeg, stipendium: stip, kv, gesamt, zeilen: q2.zeilen, unsicher };
 }
+
+// Szenario-Vergleich: dieselbe Rechnung zweimal, positive Differenz heißt B bringt mehr.
+export function vergleiche(eA, eB, W) {
+  const a = berechne(eA, W);
+  const b = berechne(eB, W);
+  return { a, b, differenz: cent(b.gesamt - a.gesamt) };
+}

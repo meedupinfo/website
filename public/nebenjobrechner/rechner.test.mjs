@@ -1,7 +1,7 @@
 // Prüffälle. Start: node rechner.test.mjs
 // Erwartete Werte stammen aus amtlichen Beispielen und Rechnern (Quelle je Fall), nicht aus diesem Code.
 import assert from "node:assert/strict";
-import { berechne, einkommensteuer, sozialabgaben, bafoegAnrechnung, studiBeitrag } from "./rechner.js";
+import { berechne, einkommensteuer, sozialabgaben, bafoegAnrechnung, studiBeitrag, vergleiche } from "./rechner.js";
 import W from "./werte/2026.js";
 import W27 from "./werte/2027.js";
 
@@ -178,6 +178,24 @@ fall("Rechenkette summiert sich zur großen Zahl", () => {
     assert.equal(Math.round(job.reduce((a, z) => a + z.betrag * 100, 0)) / 100, res.zeilen.find((z) => z.summe).betrag);
     assert.ok(posten.every((z) => z.grund && z.ziel), "jede Zeile hat Grund und Sprungziel");
   }
+});
+
+// Szenario-Vergleich nutzt dieselbe Rechnung: identische Eingaben ergeben exakt dasselbe Ergebnis
+fall("Vergleich mit identischem Szenario", () => {
+  const e = { ...basis, brutto: 603, bafoeg: true, bafoegBetrag: 992, stipendium: "deutschland" };
+  const v = vergleiche(e, { ...e }, W);
+  assert.deepEqual(v.a, v.b);
+  assert.equal(v.differenz, 0);
+});
+// B überschreitet die Minijob-Grenze: 700 Euro Midijob. AN-Bemessung 138,87 (DRV Zahlen und Tabellen 1/2026):
+// RV 12,91, KV 7,3 % + 1,45 % = 12,15, PV 1,8 % = 2,50, AV 1,3 % = 1,81, zusammen 29,37. Netto 670,63.
+// A: Minijob 603 Euro netto 581,29 (DRV). B ist über den Job versichert, kein eigener KV-Beitrag. Differenz 89,34.
+fall("Vergleich Minijob gegen Midijob über der Grenze", () => {
+  const v = vergleiche({ ...basis, brutto: 603 }, { ...basis, brutto: 700 }, W);
+  assert.equal(v.a.gesamt, 581.29);
+  assert.equal(v.b.art, "midijob");
+  assert.equal(v.b.gesamt, 670.63);
+  assert.equal(v.differenz, 89.34);
 });
 
 // 2027: Minijob-Grenze 633 Euro (Minijob-Zentrale, 7.10.2026)

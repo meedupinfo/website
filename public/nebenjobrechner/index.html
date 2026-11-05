@@ -15,10 +15,6 @@
 <link rel="preload" href="/assets/fonts/roboto-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/meedup.css">
 <!-- seite-head -->
-<link rel="modulepreload" href="app.js">
-<link rel="modulepreload" href="rechner.js">
-<link rel="modulepreload" href="werte/2026.js">
-<link rel="modulepreload" href="werte/2027.js">
 <style>
 /* Nebenjobrechner: nur was meedup.css nicht abdeckt */
 .rechner { align-items: start; }
@@ -103,9 +99,26 @@
 .spur::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--meedup-yale); border: 3px solid #fff; box-shadow: 0 1px 4px rgba(13, 29, 53, 0.35); }
 .spur:focus-visible { outline: 3px solid var(--meedup-focus); outline-offset: 2px; }
 @media (prefers-color-scheme: dark) { .spur::-webkit-slider-thumb { background: var(--meedup-cream); border-color: var(--meedup-sea); } .spur::-moz-range-thumb { background: var(--meedup-cream); border-color: var(--meedup-sea); } }
-.marken { position: relative; height: calc(var(--n, 1) * 1.5em + 0.4em); font-size: 0.78rem; color: var(--meedup-muted); line-height: 1.2; }
-.marken span { position: absolute; top: calc(var(--i) * 1.5em); padding: 2px 0 2px 5px; border-left: 2px solid currentColor; white-space: nowrap; }
-.marken span.rechts { transform: translateX(-100%); border-left: 0; border-right: 2px solid currentColor; padding-left: 0; padding-right: 4px; }
+.spur-wrap { position: relative; }
+.ticks { position: absolute; inset: 0; pointer-events: none; }
+.ticks span { position: absolute; top: 50%; width: 4px; height: 20px; margin: -10px 0 0 -2px; border-radius: 2px; box-shadow: 0 0 0 2px var(--meedup-card); left: calc(14px + (100% - 28px) * var(--p)); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.chip { font: inherit; font-size: 0.85rem; font-weight: 500; min-height: 36px; padding: 6px 12px; border-radius: 999px; border: 0; cursor: pointer; color: var(--meedup-text); background: var(--meedup-bg); box-shadow: inset 0 0 0 1.5px var(--meedup-line); display: inline-flex; align-items: center; gap: 8px; }
+.chip:hover { box-shadow: inset 0 0 0 1.5px var(--meedup-primary); }
+.chip::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; }
+.naechste { margin: 0; font-size: 0.9rem; color: var(--meedup-muted); min-height: 1.4em; }
+.szenario-wahl { padding: 14px 16px; border-radius: var(--r); background: var(--meedup-tint); }
+.frage .pill { margin-left: 8px; vertical-align: middle; font-family: var(--meedup-font); font-stretch: 100%; letter-spacing: 0; }
+.vergleich .aussage { font-family: var(--meedup-head); font-stretch: 125%; font-weight: 700; font-size: clamp(1.25rem, 4.5vw, 1.6rem); line-height: 1.2; color: var(--meedup-heading); margin: 0; }
+.vergleich table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.vergleich th, .vergleich td { padding: 7px 4px; border-bottom: 1px solid var(--meedup-line); text-align: left; vertical-align: top; }
+.vergleich td:not(:first-child), .vergleich th:not(:first-child) { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.vergleich tr.ende td { font-weight: 700; border-bottom: 0; }
+.vergleich tr.besser td.gewinner { color: var(--meedup-fern); }
+@media (prefers-color-scheme: dark) { .vergleich tr.besser td.gewinner { color: #9fd3a8; } }
+.vergleich-grenzen p { margin: 0; line-height: 2; }
+.vergleich-grenzen .pill { display: inline-block; line-height: 1.4; margin-right: 4px; }
+.vergleich td:first-child { hyphens: auto; }
 </style>
 <!-- /seite-head -->
 <script>
@@ -144,6 +157,14 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
   <div class="wrap bento two rechner onboarding" id="rechner">
     <form id="eingaben" class="rv" novalidate aria-label="Deine Angaben">
       <p class="fortschritt" id="fortschritt" aria-live="polite"></p>
+      <fieldset class="szenario-wahl" id="szenario-wahl" hidden>
+        <legend>Du bearbeitest gerade</legend>
+        <div class="segmented">
+          <input type="radio" id="sz-a" name="szenario" value="A" checked><label for="sz-a">Szenario A</label>
+          <input type="radio" id="sz-b" name="szenario" value="B"><label for="sz-b">Szenario B</label>
+        </div>
+        <p class="hint">Jobart, Verdienst und Arbeitszeit gelten nur für das gewählte Szenario. Alter, Kinder, Kindergeld, Krankenversicherung, BAföG und Stipendium gelten für beide.</p>
+      </fieldset>
 
       <div class="schritt" data-schritt>
         <h2 class="frage" tabindex="-1">Wie alt bist du?</h2>
@@ -177,7 +198,7 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
         </fieldset>
       </div>
 
-      <div class="schritt" data-schritt>
+      <div class="schritt" data-job data-schritt>
         <h2 class="frage" tabindex="-1">Was für einen Job hast du?</h2>
         <fieldset>
           <legend class="sr-only">Jobart</legend>
@@ -197,7 +218,7 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
         </fieldset>
       </div>
 
-      <div class="schritt" data-schritt>
+      <div class="schritt" data-job data-schritt>
         <h2 class="frage" tabindex="-1">Wie viel verdienst du?</h2>
         <fieldset>
           <legend>Verdienst angeben als</legend>
@@ -218,7 +239,7 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
         </div>
       </div>
 
-      <div class="schritt" data-schritt data-zeige="arbeitszeit">
+      <div class="schritt" data-job data-schritt data-zeige="arbeitszeit">
         <h2 class="frage" tabindex="-1">Wie viel arbeitest du?</h2>
         <div class="zwei" data-zeige="stunden">
           <div>
@@ -313,13 +334,22 @@ setTimeout(function () { if (!window.meedupMotion) document.documentElement.clas
         <button type="button" class="btn btn-ghost" id="zurueck">Zurück</button>
         <button type="submit" class="btn" id="weiter">Weiter</button>
         <button type="button" class="btn btn-ghost" id="einzeln" hidden>Fragen einzeln durchgehen</button>
+        <button type="button" class="btn" id="vergleich-start" hidden>Mit anderem Job vergleichen</button>
+        <button type="button" class="btn btn-ghost" id="vergleich-ende" hidden>Szenario B entfernen</button>
       </div>
     </form>
 
     <div class="ergebnis" id="ergebnis" aria-live="polite">
+      <div class="cell vergleich" id="vergleich-panel" tabindex="-1" hidden>
+        <h2 class="titel">Vergleich der Szenarien</h2>
+        <p class="aussage" id="vergleich-aussage"></p>
+        <div class="tabelle"><table><caption class="sr-only">Rechnung von Szenario A und B pro Monat</caption><thead><tr><th scope="col">Posten</th><th scope="col">A</th><th scope="col">B</th></tr></thead><tbody id="vergleich-tabelle"></tbody></table></div>
+        <div class="vergleich-grenzen" id="vergleich-grenzen"></div>
+        <p class="hint" id="vergleich-hinweis"></p>
+      </div>
       <div class="cell yale rv">
         <svg class="star" data-speed="0.08" style="--s:220px;--o:.12;right:-60px;top:-70px" aria-hidden="true" focusable="false"><use href="/assets/star.svg#s"/></svg>
-        <h2 class="titel">Das bleibt dir im Monat</h2>
+        <h2 class="titel" id="titel-gesamt">Das bleibt dir im Monat</h2>
         <p class="gross" id="gesamt" tabindex="-1">0 €</p>
         <p id="gesamt-text"></p>
         <h3 class="sr-only">So setzt sich der Betrag zusammen</h3>
