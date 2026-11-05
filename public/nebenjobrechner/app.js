@@ -49,7 +49,7 @@ function sichtbarkeit(e, W) {
 }
 
 const li = (a, b, cls = "") => `<li class="${cls}"><span>${a}</span><span>${b}</span></li>`;
-const punkt = (p) => `<li class="${p.status}"><span class="punkt" aria-hidden="true"></span><strong>${p.titel}: ${{ gruen: "passt", gelb: "knapp", rot: "überschritten" }[p.status]}</strong><p>${p.text} <a href="${p.quelle}" rel="noopener">Quelle</a></p></li>`;
+const punkt = (p) => `<li><span class="pill ampel-${p.status}">${{ gruen: "passt", gelb: "knapp", rot: "überschritten" }[p.status]}</span><div><strong>${p.titel}</strong><p>${p.text} <a href="${p.quelle}" rel="noopener">Quelle</a></p></div></li>`;
 
 function zeigen() {
   const e = lesen();
