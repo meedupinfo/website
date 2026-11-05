@@ -165,7 +165,8 @@ a.cell:hover .more span { transform: translateX(4px); }
 .cell.fern { background: var(--meedup-fern); }
 .cell.sea { background: var(--meedup-sea); }
 .cell.yale :is(h2, h3), .cell.fern :is(h2, h3), .cell.sea :is(h2, h3) { color: #fff; }
-.cell.yale p, .cell.fern p, .cell.sea p { color: rgba(255, 255, 255, 0.85); }
+.cell.yale p, .cell.sea p { color: rgba(255, 255, 255, 0.85); }
+.cell.fern p { color: #fff; } /* Fern ist heller als Yale und Sea, 85 % Weiß läge unter 4,5:1 */
 .cell .star { color: #fff; }
 .cell.tint .star { color: var(--meedup-yale); }
 @media (prefers-color-scheme: dark) { .cell.sea { background: #1a3050; } .cell.tint .star { color: #fff; } }
@@ -179,7 +180,8 @@ a.cell.feature:hover .shot { transform: translateY(-6px); }
 .pill { align-self: flex-start; font-size: 0.8rem; font-weight: 500; padding: 5px 12px; border-radius: 999px; background: var(--meedup-tint); color: var(--meedup-primary); }
 .pill.live { background: var(--meedup-fern); color: #fff; }
 .cell.tint .pill { background: var(--meedup-card); }
-.cell.yale .pill, .cell.fern .pill, .cell.sea .pill { background: rgba(255, 255, 255, 0.16); color: #fff; }
+.cell.yale .pill, .cell.sea .pill { background: rgba(255, 255, 255, 0.16); color: #fff; }
+.cell.fern .pill { background: rgba(13, 29, 53, 0.28); color: #fff; }
 .checks { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px; }
 .checks li { position: relative; padding-left: 28px; }
 .checks li::before { content: ""; position: absolute; left: 2px; top: 0.35em; width: 14px; height: 8px; border-left: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); opacity: 0.85; }
